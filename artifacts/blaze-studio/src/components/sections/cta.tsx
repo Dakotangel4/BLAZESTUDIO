@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const WHATSAPP_NUMBER = "2348000000000";
+const WHATSAPP_NUMBER = "2349130986279";
 
 export default function Cta() {
   const scrollToForm = () => {

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Send, MessageCircle, User, Phone, Mail, Globe, ChevronDown, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const WHATSAPP_NUMBER = "2348000000000"; // TODO: Replace with your actual WhatsApp number
+const WHATSAPP_NUMBER = "2349130986279";
 
 const SERVICES = [
   "High-Converting Website",
