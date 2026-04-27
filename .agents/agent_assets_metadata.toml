@@ -1,0 +1,44 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "9UKN59fqSvSnpHr0niSjQ"
+uri = "file://artifacts/blaze-studio/src/assets/hero-team.png"
+type = "image"
+title = "Creative team in modern office"
+
+[[generated]]
+id = "LnMdMO63E40xeta-wdW6n"
+uri = "file://artifacts/blaze-studio/src/assets/portfolio-1.png"
+type = "image"
+title = "Real estate website mockup"
+
+[[generated]]
+id = "3tUJbN-DkgnpMu6zJP8EJ"
+uri = "file://artifacts/blaze-studio/src/assets/portfolio-2.png"
+type = "image"
+title = "E-commerce website mockup"
+
+[[generated]]
+id = "2KAKD-mRVFMSUEeohvSks"
+uri = "file://artifacts/blaze-studio/src/assets/portfolio-3.png"
+type = "image"
+title = "SaaS AI dashboard mockup"
+
+[[generated]]
+id = "50fPgoKLZ7D6vRF-_4ZiN"
+uri = "file://artifacts/blaze-studio/src/assets/test-1.png"
+type = "image"
+title = "Nigerian business owner headshot"
+
+[[generated]]
+id = "k9_rGpda5uW0qQjMGq2bY"
+uri = "file://artifacts/blaze-studio/src/assets/test-2.png"
+type = "image"
+title = "African female entrepreneur headshot"
+
+[[generated]]
+id = "MmQsho1SvaBZGKxj6MOke"
+uri = "file://artifacts/blaze-studio/src/assets/test-3.png"
+type = "image"
+title = "Nigerian male CEO headshot"

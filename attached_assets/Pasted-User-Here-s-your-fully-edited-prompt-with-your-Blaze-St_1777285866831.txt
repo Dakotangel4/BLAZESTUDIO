@@ -1,0 +1,117 @@
+User: Here's your fully edited prompt with your Blaze Studio services plugged in exactly where they belong:
+
+---
+
+Build a modern, responsive single-page agency website for a web design, SEO, and digital marketing agency called **Blaze Studio**. Use React with Tailwind CSS. The design should be clean, professional, and conversion-focused with a white/light gray color scheme, orange/warm accents, and smooth scroll animations.
+
+IMPORTANT: For ALL images on this site, do NOT use placeholder services, stock photo URLs, or generic SVG illustrations. Use Replit's image generation tool to create realistic, humanized, professional photos that match the context of each section. Every image should feel authentic, warm, and like real people in real business environments — not overly staged stock photography.
+
+**STRUCTURE & SECTIONS:**
+
+**1. NAVIGATION**
+- Fixed top navbar with logo "Blaze Studio" on left, menu links (Services, Process, Portfolio, Testimonials, Contact) on right, and a "Get Free Audit" CTA button
+- Mobile hamburger menu that slides in from the right
+
+**2. HERO SECTION**
+- Small "HIGH-CONVERTING WEBSITES" badge/pill at the top
+- Large bold headline: "Your Website Should Be Your Best Salesperson. Is It?"
+- Subheadline: "We build high-converting business websites, rank you on Google, run digital marketing campaigns that actually sell, and integrate AI into your business systems — all under one roof."
+- Two CTA buttons: "Get a Free Audit" (primary) and "See Our Work" (secondary/outline)
+- Right side: Generate a realistic photo of a diverse, modern creative team collaborating in a bright, clean office space with large monitors showing website designs. Warm lighting, candid professional atmosphere, not overly posed.
+- Subtle background pattern or light texture
+
+**3. PROBLEM SECTION** (dark background)
+- Headline: "Your Competitors Are Winning Online. You Shouldn't Let Them."
+- List of 5 pain points clients face:
+  - Your website gets traffic but nobody calls, books, or buys
+  - You're invisible on Google — customers can't find you
+  - You're spending money on ads that don't convert
+  - Your team wastes hours on tasks AI could handle in seconds
+  - You have a website but it doesn't reflect how good your business actually is
+
+**4. SERVICES SECTION**
+- Section label: "What We Deliver"
+- Headline: "Three things that move the needle."
+- Three featured core service cards (large, prominent):
+  1. **High-Converting Websites** — Not just beautiful — built to turn visitors into paying clients. Every layout, word, and button is engineered to convert. Results: Fast-loading mobile-first design, Clear CTAs that drive action, Built for trust & sales, Custom or WordPress
+  2. **SEO & Digital Marketing** — We get you in front of people actively searching for what you sell — on Google and every digital channel that matters. Results: Page 1 Google rankings, Paid ads (Meta, Google) that convert, Sales funnels built to close, Traffic that turns into real revenue
+  3. **AI Business Integration** — We plug AI into your business systems — automating repetitive work so your team focuses only on what truly matters. Results: AI chatbots for lead capture & support, Automated workflows & follow-ups, Smart tools for faster operations, Competitive edge through technology
+- Below the 3 core cards, a secondary "Also Available" row with smaller cards for:
+  - Website Maintenance — Updates, security & support handled for you
+  - White Label Services — We build under your brand, perfect for agencies
+  - Brand Merchandise — Custom branded t-shirts and caps for your business
+
+**5. PROCESS SECTION**
+- Headline: "Simple Process. Serious Results."
+- 4 steps: Strategy → Design → Build → Launch & Grow
+
+**6. PORTFOLIO SECTION**
+- Headline: "Work That Converts"
+- 3 project cards with generated realistic website mockup images, project name, category tag, and short result stat (e.g. "+180% leads")
+
+**7. TESTIMONIALS SECTION**
+- 3 client testimonials with realistic generated headshots, name, company, and quote
+- Quotes should focus on results: leads generated, Google rankings, revenue increase
+
+**8. WHY US SECTION**
+- Headline: "We Don't Just Build Sites. We Build Businesses."
+- 4 points: Results not deliverables, Speed without sacrificing quality, AI-forward thinking, One team full stack
+- Right side: pull quote — *"Most businesses have a website. Very few have one that works. That gap is exactly where we operate."*
+
+**9. CTA SECTION** (dark background with warm glow)
+- Headline: "Let's Turn Your Website Into a Revenue Machine."
+- Subtext: "Get a free audit — we'll tell you exactly what's costing you leads and how to fix it."
+- Two buttons: "Get My Free Audit" (primary orange) and "WhatsApp Us" (outline)
+
+**10. FOOTER**
+- Logo, services list, contact info (Lagos, Nigeria), social links, copyright
+
+---
+
+add FAQ
+
+GitHub Copilot: I'll create a modern, responsive single-page agency website for Blaze Studio with React and Tailwind CSS. Let me build this with all the sections you specified, including the FAQ, with smooth animations and a conversion-focused design. 
+
+
+
+I need you to create or open an empty folder in VS Code for the Blaze Studio website project. Please:
+
+1. Create a new empty folder (e.g., `blaze-studio-website`)
+2. Open it in VS Code
+3. Let me know when it's ready
+
+Once done, I'll set up the complete React + Tailwind CSS project with all sections, animations, mobile responsiveness, and the FAQ.
+
+User: start
+
+GitHub Copilot: Chat took too long to get ready. Please ensure you are signed in to GitHub and that the extension `GitHub.copilot-chat` is installed and enabled. Click restart to try again if this issue persists.
+
+Show Details
+
+User: restart
+
+GitHub Copilot: Read [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt/src/App.jsx#1-1), lines 1 to 50
+
+Read [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt/src/App.jsx)
+
+Replacing 193 lines with 518 lines in [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt/src/App.jsx)
+
+
+```
+
+```
+
+
+Read [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt/package.json)
+
+Read [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt)
+
+Read [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt/src)
+
+Read [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt/src/main.jsx)
+
+Read [](file:///c%3A/Users/hp/Documents/Codex/2026-04-26/here-s-your-fully-edited-prompt/src/index.css)
+
+Ran terminal command: cd "c:\Users\hp\Documents\Codex\2026-04-26\here-s-your-fully-edited-prompt" ; npm run dev
+
+Made changes.
