@@ -42,7 +42,7 @@ export default function Navbar() {
       <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
         <Link href="/">
           <div className="flex items-center cursor-pointer">
-            <img src={logo} alt="Blaze Studio" className="h-12 w-auto object-contain" />
+            <img src={logo} alt="Blaze Studio" className="h-16 w-auto object-contain" style={{ mixBlendMode: "multiply" }} />
           </div>
         </Link>
 
