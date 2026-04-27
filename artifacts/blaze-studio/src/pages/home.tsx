@@ -11,6 +11,7 @@ import WhyUs from "@/components/sections/why-us";
 import Faq from "@/components/sections/faq";
 import Cta from "@/components/sections/cta";
 import ContactForm from "@/components/sections/contact-form";
+import WhatsAppFloat from "@/components/ui/whatsapp-float";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
         <Cta />
       </main>
       <Footer />
+      <WhatsAppFloat />
     </div>
   );
 }
