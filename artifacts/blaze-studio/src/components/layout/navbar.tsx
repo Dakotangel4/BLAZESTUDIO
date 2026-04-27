@@ -60,7 +60,7 @@ export default function Navbar() {
               </li>
             ))}
           </ul>
-          <Button onClick={() => scrollTo("contact")} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+          <Button onClick={() => scrollTo("contact-form")} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
             Get Free Audit
           </Button>
         </nav>
@@ -97,7 +97,7 @@ export default function Navbar() {
               ))}
             </ul>
             <div className="mt-auto">
-              <Button onClick={() => scrollTo("contact")} size="lg" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
+              <Button onClick={() => scrollTo("contact-form")} size="lg" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
                 Get Free Audit
               </Button>
             </div>

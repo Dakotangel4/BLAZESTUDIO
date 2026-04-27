@@ -10,6 +10,7 @@ import Testimonials from "@/components/sections/testimonials";
 import WhyUs from "@/components/sections/why-us";
 import Faq from "@/components/sections/faq";
 import Cta from "@/components/sections/cta";
+import ContactForm from "@/components/sections/contact-form";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         <Testimonials />
         <WhyUs />
         <Faq />
+        <ContactForm />
         <Cta />
       </main>
       <Footer />

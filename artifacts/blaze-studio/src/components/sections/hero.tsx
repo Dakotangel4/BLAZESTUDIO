@@ -58,7 +58,7 @@ export default function Hero() {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Button size="lg" className="h-14 px-8 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95 group" onClick={() => scrollTo("contact")}>
+              <Button size="lg" className="h-14 px-8 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95 group" onClick={() => scrollTo("contact-form")}>
                 Get a Free Audit
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
