@@ -1,5 +1,6 @@
 import { Link } from "wouter";
-import { Flame, MapPin, Mail, Phone, Twitter, Linkedin, Instagram, ArrowRight } from "lucide-react";
+import { MapPin, Mail, Phone, Twitter, Linkedin, Instagram, ArrowRight } from "lucide-react";
+const logo = "/logo.png";
 
 export default function Footer() {
   const scrollTo = (id: string) => {
@@ -14,9 +15,8 @@ export default function Footer() {
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-              <Flame className="w-8 h-8 text-primary" fill="currentColor" />
-              <span className="font-bold text-2xl tracking-tight text-foreground">Blaze Studio</span>
+            <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+              <img src={logo} alt="Blaze Studio" className="h-14 w-auto object-contain" />
             </div>
             <p className="text-muted-foreground mt-4 max-w-sm">
               We build high-converting business websites, rank you on Google, run digital marketing campaigns, and integrate AI into your business systems.

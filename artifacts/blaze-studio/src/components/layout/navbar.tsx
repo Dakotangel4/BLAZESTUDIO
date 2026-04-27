@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
-import { Flame, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+const logo = "/logo.png";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -40,9 +41,8 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
         <Link href="/">
-          <div className="flex items-center gap-2 cursor-pointer">
-            <Flame className="w-8 h-8 text-primary" fill="currentColor" />
-            <span className="font-bold text-xl tracking-tight text-foreground">Blaze Studio</span>
+          <div className="flex items-center cursor-pointer">
+            <img src={logo} alt="Blaze Studio" className="h-12 w-auto object-contain" />
           </div>
         </Link>
 
