@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { ArrowRight, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNav } from "@/hooks/use-nav";
 
 const WHATSAPP_NUMBER = "2349130986279";
 
 export default function Cta() {
-  const scrollToForm = () => {
-    document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
-  };
+  const navigate = useNav();
+  const goToForm = () => navigate("/contact", "contact-form");
 
   return (
     <section className="py-24 relative overflow-hidden bg-foreground text-background" id="contact">
@@ -32,7 +32,7 @@ export default function Cta() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" onClick={scrollToForm} className="w-full sm:w-auto h-16 px-10 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_40px_-10px_rgba(234,88,12,0.8)] transition-all hover:scale-105 active:scale-95 group">
+            <Button size="lg" onClick={goToForm} className="w-full sm:w-auto h-16 px-10 text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-[0_0_40px_-10px_rgba(234,88,12,0.8)] transition-all hover:scale-105 active:scale-95 group">
               Get My Free Audit
               <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-1 transition-transform" />
             </Button>

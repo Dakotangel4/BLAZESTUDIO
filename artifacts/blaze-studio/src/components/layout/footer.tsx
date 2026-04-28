@@ -1,23 +1,21 @@
 import { Link } from "wouter";
 import { MapPin, Mail, Phone, Twitter, Linkedin, Instagram, ArrowRight } from "lucide-react";
+import { useNav } from "@/hooks/use-nav";
 const logo = "/logo.png";
 
 export default function Footer() {
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const navigate = useNav();
 
   return (
     <footer className="bg-background border-t pt-16 pb-8">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           <div className="space-y-4">
-            <div className="flex items-center cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
-              <img src={logo} alt="Blaze Studio" className="h-14 w-auto object-contain" />
-            </div>
+            <Link href="/">
+              <div className="flex items-center cursor-pointer">
+                <img src={logo} alt="Blaze Studio" className="h-14 w-auto object-contain" />
+              </div>
+            </Link>
             <p className="text-muted-foreground mt-4 max-w-sm">
               We build high-converting business websites, rank you on Google, run digital marketing campaigns, and integrate AI into your business systems.
             </p>
@@ -38,22 +36,22 @@ export default function Footer() {
             <h4 className="font-bold text-lg mb-6">Services</h4>
             <ul className="space-y-4 text-muted-foreground">
               <li>
-                <button onClick={() => scrollTo("services")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/services")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> Web Design
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollTo("services")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/services")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> SEO & Marketing
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollTo("services")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/services")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> AI Integration
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollTo("services")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/services")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> Website Maintenance
                 </button>
               </li>
@@ -64,22 +62,22 @@ export default function Footer() {
             <h4 className="font-bold text-lg mb-6">Company</h4>
             <ul className="space-y-4 text-muted-foreground">
               <li>
-                <button onClick={() => scrollTo("process")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/services", "process")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> Our Process
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollTo("portfolio")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/portfolio")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> Portfolio
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollTo("testimonials")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/testimonials")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> Testimonials
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollTo("faq")} className="hover:text-primary transition-colors flex items-center gap-2">
+                <button onClick={() => navigate("/contact", "faq")} className="hover:text-primary transition-colors flex items-center gap-2">
                   <ArrowRight className="w-4 h-4" /> FAQ
                 </button>
               </li>

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Phone, ArrowRight, Sparkles } from "lucide-react";
+import { useNav } from "@/hooks/use-nav";
 
 const SESSION_KEY = "blaze_sticky_dismissed";
 
 export default function StickyCTABar() {
   const [visible, setVisible] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const navigate = useNav();
 
   useEffect(() => {
     if (sessionStorage.getItem(SESSION_KEY)) {
@@ -32,7 +34,7 @@ export default function StickyCTABar() {
   };
 
   const handleCTA = () => {
-    document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
+    navigate("/contact", "contact-form");
   };
 
   const handleWhatsApp = () => {

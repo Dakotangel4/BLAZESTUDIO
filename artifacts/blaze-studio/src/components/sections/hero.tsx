@@ -1,14 +1,10 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNav } from "@/hooks/use-nav";
 
 export default function Hero() {
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const navigate = useNav();
 
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden overflow-x-hidden">
@@ -58,11 +54,11 @@ export default function Hero() {
               transition={{ delay: 0.5, duration: 0.6 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Button size="lg" className="h-14 px-8 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95 group" onClick={() => scrollTo("contact-form")}>
+              <Button size="lg" className="h-14 px-8 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:scale-105 active:scale-95 group" onClick={() => navigate("/contact", "contact-form")}>
                 Get a Free Audit
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-base font-bold border-2 hover:bg-secondary transition-all" onClick={() => scrollTo("portfolio")}>
+              <Button size="lg" variant="outline" className="h-14 px-8 text-base font-bold border-2 hover:bg-secondary transition-all" onClick={() => navigate("/portfolio")}>
                 See Our Work
               </Button>
             </motion.div>

@@ -5,6 +5,7 @@ import {
   Heart, Leaf, BookOpen, Wallet, Sparkles, Hammer,
   Sun, Activity, CalendarDays, Package,
 } from "lucide-react";
+import { useNav } from "@/hooks/use-nav";
 
 interface Brand {
   name: string;
@@ -220,6 +221,7 @@ function MarqueeRow({ brands, reverse = false }: { brands: Brand[]; reverse?: bo
 export default function Brands() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
+  const navigate = useNav();
 
   const row1 = BRANDS.slice(0, 8);
   const row2 = BRANDS.slice(8);
@@ -268,7 +270,7 @@ export default function Brands() {
         <p className="text-sm text-muted-foreground">
           Ready to add your brand to this list?{" "}
           <button
-            onClick={() => document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => navigate("/contact", "contact-form")}
             className="text-primary font-semibold hover:underline underline-offset-4 transition-all"
           >
             Get your free audit →

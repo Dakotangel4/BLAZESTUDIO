@@ -25,3 +25,15 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - `pnpm --filter @workspace/api-server run dev` — run API server locally
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+
+## Blaze Studio (artifact)
+
+Multi-page React + Vite site using `wouter` for routing. Routes:
+
+- `/` Home — Hero, Stats, Brands, Why Us, CTA
+- `/services` — Services + Process
+- `/portfolio` — Portfolio
+- `/testimonials` — Testimonials
+- `/contact` — Problem, Contact form, FAQ
+
+Shared layout in `src/components/layout/site-layout.tsx` wraps every page with the navbar, footer, sticky CTA, WhatsApp float, live notifications, and exit-intent popup. Cross-page navigation (with optional anchor scroll) goes through the `useNav` hook in `src/hooks/use-nav.ts`.

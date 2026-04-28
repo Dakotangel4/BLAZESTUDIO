@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, MessageCircle, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useNav } from "@/hooks/use-nav";
 
 const WHATSAPP_NUMBER = "2349130986279";
 const SESSION_KEY = "blaze_exit_shown";
 
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
+  const navigate = useNav();
 
   const show = useCallback(() => {
     if (sessionStorage.getItem(SESSION_KEY)) return;
@@ -66,8 +68,8 @@ export default function ExitIntentPopup() {
   const scrollToForm = () => {
     close();
     setTimeout(() => {
-      document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
-    }, 300);
+      navigate("/contact", "contact-form");
+    }, 200);
   };
 
   const openWhatsApp = () => {
