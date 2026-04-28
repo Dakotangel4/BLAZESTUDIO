@@ -86,7 +86,7 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
-            className="relative lg:ml-auto w-full max-w-lg aspect-square lg:aspect-auto lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-white/20"
+            className="relative w-full aspect-square lg:aspect-auto lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-white/20"
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent z-10" />
             <img
