@@ -9,6 +9,7 @@ import Portfolio from "@/components/sections/portfolio";
 import Testimonials from "@/components/sections/testimonials";
 import WhyUs from "@/components/sections/why-us";
 import Stats from "@/components/sections/stats";
+import Brands from "@/components/sections/brands";
 import Faq from "@/components/sections/faq";
 import Cta from "@/components/sections/cta";
 import ContactForm from "@/components/sections/contact-form";
@@ -23,6 +24,7 @@ export default function Home() {
       <main className="flex-1">
         <Hero />
         <Stats />
+        <Brands />
         <Problem />
         <Services />
         <Process />
