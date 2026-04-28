@@ -33,9 +33,10 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, [location]);
 
-  const navLinks = [
+  const navLinks: { name: string; path: string; scrollId?: string }[] = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/about" },
     { name: "Services", path: "/services" },
-    { name: "Process", path: "/services", scrollId: "process" },
     { name: "Portfolio", path: "/portfolio" },
     { name: "Testimonials", path: "/testimonials" },
     { name: "Contact", path: "/contact" },

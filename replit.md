@@ -31,6 +31,7 @@ See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and pa
 Multi-page React + Vite site using `wouter` for routing. Routes:
 
 - `/` Home — Hero, Stats, Brands, Why Us, CTA
+- `/about` — Story, values, team, milestones
 - `/services` — Services + Process
 - `/portfolio` — Portfolio
 - `/testimonials` — Testimonials
