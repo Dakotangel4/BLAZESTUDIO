@@ -39,15 +39,19 @@ const faqs = [
 
 export default function Faq() {
   return (
-    <section className="py-24 bg-secondary/30" id="faq">
-      <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-        <div className="text-center mb-16">
+    <section className="py-16 sm:py-20 lg:py-28 bg-secondary/30" id="faq">
+      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+        <div className="text-center mb-12 md:mb-16">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-4 sm:mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            FAQ
+          </span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-4"
+            className="text-[clamp(1.875rem,6vw,3.25rem)] font-extrabold tracking-[-0.02em] text-foreground mb-3 sm:mb-4 leading-[1.1] text-balance"
           >
             Frequently Asked <span className="text-primary">Questions</span>
           </motion.h2>
@@ -56,7 +60,7 @@ export default function Faq() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg text-muted-foreground"
+            className="text-base sm:text-lg text-muted-foreground"
           >
             Everything you need to know about working with us.
           </motion.p>
@@ -68,13 +72,13 @@ export default function Faq() {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <Accordion type="single" collapsible className="w-full space-y-4">
+          <Accordion type="single" collapsible className="w-full space-y-3 sm:space-y-4">
             {faqs.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index}`} className="bg-background border rounded-xl px-6 data-[state=open]:border-primary transition-colors">
-                <AccordionTrigger className="text-left text-lg font-bold hover:no-underline hover:text-primary py-6">
+              <AccordionItem key={index} value={`item-${index}`} className="bg-background border rounded-2xl px-5 sm:px-6 data-[state=open]:border-primary data-[state=open]:shadow-md transition-all">
+                <AccordionTrigger className="text-left text-base sm:text-lg font-bold hover:no-underline hover:text-primary py-5 sm:py-6 [&>svg]:text-primary [&>svg]:shrink-0">
                   {faq.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-base leading-relaxed pb-6">
+                <AccordionContent className="text-muted-foreground text-sm sm:text-base leading-relaxed pb-5 sm:pb-6">
                   {faq.a}
                 </AccordionContent>
               </AccordionItem>

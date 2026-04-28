@@ -26,9 +26,9 @@ const points = [
 
 export default function WhyUs() {
   return (
-    <section className="py-24 bg-background" id="about">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <section className="py-16 sm:py-20 lg:py-28 bg-background" id="about">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           
           <div>
             <motion.h2
@@ -36,13 +36,13 @@ export default function WhyUs() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-12"
+              className="text-[clamp(1.875rem,6vw,3.25rem)] font-extrabold tracking-[-0.02em] text-foreground mb-8 sm:mb-10 lg:mb-12 leading-[1.1] text-balance"
             >
               We Don't Just Build Sites.<br/>
               <span className="text-primary">We Build Businesses.</span>
             </motion.h2>
 
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-7 lg:space-y-8">
               {points.map((point, index) => (
                 <motion.div 
                   key={point.title}
@@ -52,12 +52,12 @@ export default function WhyUs() {
                   transition={{ duration: 0.4, delay: index * 0.1 }}
                   className="flex gap-4"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-secondary flex items-center justify-center text-primary shrink-0">
-                    <point.icon className="w-6 h-6" />
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-secondary flex items-center justify-center text-primary shrink-0">
+                    <point.icon className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-2">{point.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{point.desc}</p>
+                  <div className="min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1.5 sm:mb-2 tracking-tight">{point.title}</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{point.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -69,17 +69,17 @@ export default function WhyUs() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="bg-secondary rounded-3xl p-10 md:p-16 relative"
+            className="bg-secondary rounded-3xl p-7 sm:p-10 md:p-12 lg:p-14 relative overflow-hidden"
           >
-            <div className="text-primary text-6xl font-serif leading-none absolute top-8 left-8 opacity-20">"</div>
-            <h3 className="text-3xl md:text-4xl font-bold leading-tight relative z-10 mt-4 text-foreground/90">
+            <div className="text-primary text-5xl sm:text-6xl font-serif leading-none absolute top-6 left-6 sm:top-8 sm:left-8 opacity-20">"</div>
+            <h3 className="text-2xl sm:text-3xl md:text-[2.25rem] font-bold leading-[1.25] tracking-[-0.01em] relative z-10 mt-3 sm:mt-4 text-foreground/90 text-balance">
               Most businesses have a website. <br/><br/>
               Very few have one that <span className="text-primary">works</span>. <br/><br/>
               That gap is exactly where we operate.
             </h3>
-            <div className="mt-12 flex items-center gap-4">
-              <div className="w-16 h-1 bg-primary rounded-full" />
-              <span className="font-bold text-foreground tracking-wider uppercase">The Blaze Standard</span>
+            <div className="mt-8 sm:mt-10 lg:mt-12 flex items-center gap-3 sm:gap-4">
+              <div className="w-12 sm:w-16 h-1 bg-primary rounded-full" />
+              <span className="font-bold text-foreground tracking-widest uppercase text-xs sm:text-sm">The Blaze Standard</span>
             </div>
           </motion.div>
 

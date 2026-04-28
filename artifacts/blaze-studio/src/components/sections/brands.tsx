@@ -169,7 +169,7 @@ function BrandCard({ brand }: { brand: Brand }) {
   return (
     <div
       className={`
-        group flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 mx-3
+        group flex-shrink-0 flex items-center gap-3 sm:gap-3.5 px-4 sm:px-5 py-3 sm:py-3.5 mx-2 sm:mx-3
         rounded-2xl border bg-white/[0.03] backdrop-blur-sm
         ${brand.borderColor} ${brand.hoverBorder}
         shadow-sm hover:shadow-md
@@ -177,8 +177,8 @@ function BrandCard({ brand }: { brand: Brand }) {
       `}
     >
       {/* Icon logo mark */}
-      <div className={`flex-shrink-0 w-10 h-10 rounded-xl ${brand.iconBg} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
-        <brand.Icon className={`w-5 h-5 ${brand.iconColor}`} strokeWidth={1.75} />
+      <div className={`flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-xl ${brand.iconBg} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
+        <brand.Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${brand.iconColor}`} strokeWidth={1.75} />
       </div>
 
       {/* Brand name + industry */}
@@ -200,8 +200,8 @@ function MarqueeRow({ brands, reverse = false }: { brands: Brand[]; reverse?: bo
 
   return (
     <div className="relative flex overflow-hidden w-full">
-      <div className="absolute left-0 top-0 bottom-0 w-28 z-10 bg-gradient-to-r from-background to-transparent pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-28 z-10 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 lg:w-28 z-10 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 lg:w-28 z-10 bg-gradient-to-l from-background to-transparent pointer-events-none" />
 
       <motion.div
         className="flex items-center"
@@ -227,23 +227,24 @@ export default function Brands() {
   const row2 = BRANDS.slice(8);
 
   return (
-    <section className="py-20 bg-background overflow-hidden" ref={ref}>
+    <section className="py-14 sm:py-16 lg:py-20 bg-background overflow-hidden" ref={ref}>
       {/* Heading */}
-      <div className="container mx-auto px-4 md:px-6 mb-12">
+      <div className="container mx-auto px-4 sm:px-6 mb-10 sm:mb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border text-muted-foreground font-semibold text-xs tracking-widest uppercase mb-4">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-border text-muted-foreground font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            Trusted by Businesses Across Nigeria
+            <span className="hidden sm:inline">Trusted by Businesses Across Nigeria</span>
+            <span className="sm:hidden">Trusted Across Nigeria</span>
           </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
+          <h2 className="text-[clamp(1.625rem,5.5vw,2.5rem)] font-extrabold text-foreground tracking-[-0.02em] leading-[1.15] text-balance">
             Brands That Choose <span className="text-primary">Blaze Studio</span>
           </h2>
-          <p className="mt-3 text-muted-foreground text-base max-w-md mx-auto">
+          <p className="mt-3 text-sm sm:text-base text-muted-foreground max-w-md mx-auto px-4 sm:px-0">
             From startups to established names — we've helped businesses across every industry grow online.
           </p>
         </motion.div>

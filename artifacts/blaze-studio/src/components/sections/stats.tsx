@@ -97,7 +97,7 @@ export default function Stats() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section className="relative py-24 overflow-hidden bg-[#0d0d0d]" ref={ref}>
+    <section className="relative py-16 sm:py-20 lg:py-28 overflow-hidden bg-[#0d0d0d]" ref={ref}>
       {/* Decorative background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(234,88,12,0.15),transparent)]" />
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.04]" />
@@ -114,29 +114,29 @@ export default function Stats() {
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-semibold text-xs tracking-widest uppercase mb-4">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             Proven Track Record
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight">
+          <h2 className="text-[clamp(1.875rem,6vw,3.25rem)] font-extrabold text-white tracking-[-0.02em] leading-[1.1] text-balance">
             Numbers That <span className="text-primary">Speak for Themselves</span>
           </h2>
-          <p className="mt-4 text-white/50 text-lg max-w-xl mx-auto">
+          <p className="mt-4 text-white/50 text-base sm:text-lg max-w-xl mx-auto">
             Real results from real businesses we've partnered with across Nigeria.
           </p>
         </motion.div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
           {STATS.map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 32 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 md:p-8 overflow-hidden hover:border-primary/30 transition-colors duration-300"
+              className="group relative rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 sm:p-6 md:p-7 lg:p-8 overflow-hidden hover:border-primary/30 transition-colors duration-300"
             >
               {/* Card glow on hover */}
               <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
@@ -150,7 +150,7 @@ export default function Stats() {
 
               {/* Number */}
               <div className="relative z-10 mb-1">
-                <span className="text-4xl md:text-5xl font-extrabold text-white tracking-tight tabular-nums">
+                <span className="text-[clamp(2rem,7vw,3rem)] font-extrabold text-white tracking-[-0.02em] tabular-nums">
                   <AnimatedNumber
                     value={stat.value}
                     suffix={stat.suffix}

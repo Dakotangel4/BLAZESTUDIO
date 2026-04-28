@@ -94,24 +94,25 @@ export default function ContactForm() {
     "w-full bg-white border border-border rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
 
   return (
-    <section id="contact-form" className="py-24 bg-secondary/40">
-      <div className="container mx-auto px-4 md:px-6">
+    <section id="contact-form" className="py-16 sm:py-20 lg:py-28 bg-secondary/40">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14"
+          className="text-center mb-10 sm:mb-12 md:mb-14"
         >
-          <span className="inline-block text-xs font-bold tracking-widest text-primary uppercase mb-4">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-4 sm:mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
             Free Audit
           </span>
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground mb-4">
+          <h2 className="text-[clamp(1.875rem,6vw,3.25rem)] font-extrabold tracking-[-0.02em] text-foreground mb-3 sm:mb-4 leading-[1.1] text-balance">
             Let's See What Your Website
             <br className="hidden md:block" />
             <span className="text-primary"> Is Missing.</span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
             Fill in your details and we'll reach out via WhatsApp with a personalised audit — no pressure, no fluff.
           </p>
         </motion.div>
@@ -150,7 +151,7 @@ export default function ContactForm() {
             <form
               onSubmit={handleSubmit}
               noValidate
-              className="bg-white rounded-3xl border border-border shadow-xl p-8 md:p-10 space-y-5"
+              className="bg-white rounded-3xl border border-border shadow-xl p-6 sm:p-8 md:p-10 space-y-4 sm:space-y-5"
             >
               {/* Row 1: Name + Phone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

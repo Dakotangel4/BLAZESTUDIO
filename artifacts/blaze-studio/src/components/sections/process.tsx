@@ -25,15 +25,19 @@ const steps = [
 
 export default function Process() {
   return (
-    <section className="py-24 bg-secondary/30 relative" id="process">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center max-w-3xl mx-auto mb-20">
+    <section className="py-16 sm:py-20 lg:py-28 bg-secondary/30 relative" id="process">
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-16 md:mb-20">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-4 sm:mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+            How We Work
+          </span>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-3xl md:text-5xl font-bold tracking-tight text-foreground"
+            className="text-[clamp(1.875rem,6vw,3.25rem)] font-extrabold tracking-[-0.02em] text-foreground leading-[1.1] text-balance"
           >
             Simple Process. <span className="text-primary">Serious Results.</span>
           </motion.h2>
@@ -51,7 +55,7 @@ export default function Process() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-7 sm:gap-8 md:gap-4 relative z-10">
             {steps.map((step, index) => (
               <motion.div
                 key={step.num}
@@ -59,20 +63,20 @@ export default function Process() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="relative flex flex-col md:items-center md:text-center group"
+                className="relative flex md:flex-col md:items-center md:text-center gap-5 md:gap-0 group"
               >
                 {/* Mobile connecting line */}
                 {index !== steps.length - 1 && (
-                  <div className="md:hidden absolute top-12 left-6 w-0.5 h-full bg-border -z-10" />
+                  <div className="md:hidden absolute top-14 left-7 w-0.5 h-[calc(100%+1.75rem)] bg-border -z-10" />
                 )}
                 
-                <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white border-4 border-primary flex items-center justify-center text-xl md:text-2xl font-bold text-primary shadow-xl shadow-primary/20 mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-24 md:h-24 shrink-0 rounded-full bg-white border-4 border-primary flex items-center justify-center text-base sm:text-lg md:text-2xl font-bold text-primary shadow-xl shadow-primary/20 md:mb-6 group-hover:scale-110 transition-transform duration-300">
                   {step.num}
                 </div>
                 
-                <div className="pl-20 md:pl-0 -mt-20 md:mt-0">
-                  <h3 className="text-xl md:text-2xl font-bold mb-3">{step.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{step.desc}</p>
+                <div className="flex-1 min-w-0 md:flex-none">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2 md:mb-3 tracking-tight">{step.title}</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{step.desc}</p>
                 </div>
               </motion.div>
             ))}
