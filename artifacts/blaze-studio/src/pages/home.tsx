@@ -16,6 +16,7 @@ import ContactForm from "@/components/sections/contact-form";
 import WhatsAppFloat from "@/components/ui/whatsapp-float";
 import LiveNotifications from "@/components/ui/live-notifications";
 import ExitIntentPopup from "@/components/ui/exit-intent-popup";
+import StickyCTABar from "@/components/ui/sticky-cta-bar";
 
 export default function Home() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
         <Cta />
       </main>
       <Footer />
+      <StickyCTABar />
       <WhatsAppFloat />
       <LiveNotifications />
       <ExitIntentPopup />
