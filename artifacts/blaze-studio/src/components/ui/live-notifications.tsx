@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Users } from "lucide-react";
+import { X } from "lucide-react";
 
 interface NotificationEntry {
   name: string;
@@ -137,62 +137,51 @@ export default function LiveNotifications() {
   }, [dismissed, current, showNext]);
 
   return (
-    <div className="fixed bottom-24 left-4 md:left-6 z-50 max-w-[320px] w-full pointer-events-none">
+    <div className="fixed bottom-6 left-4 md:left-5 z-50 pointer-events-none">
       <AnimatePresence>
         {current && !dismissed && (
           <motion.div
             key={current.id}
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="pointer-events-auto bg-white border border-border rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] overflow-hidden"
+            initial={{ opacity: 0, x: -16, scale: 0.97 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -12, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 420, damping: 34 }}
+            className="pointer-events-auto relative flex items-center gap-2.5 pl-2 pr-3 py-2 bg-white/95 backdrop-blur-md border border-black/[0.07] rounded-full shadow-[0_2px_16px_rgba(0,0,0,0.10)] overflow-hidden max-w-[260px]"
           >
-            {/* Draining progress bar */}
+            {/* Draining underline */}
             <motion.div
-              className="h-0.5 bg-primary origin-left"
+              className="absolute bottom-0 left-0 h-[2px] bg-primary/60 origin-left rounded-full"
               initial={{ scaleX: 1 }}
               animate={{ scaleX: 0 }}
               transition={{ duration: 6, ease: "linear" }}
             />
 
-            <div className="flex items-start gap-3 px-4 py-3.5">
-              {/* Avatar */}
-              <div className={`flex-shrink-0 w-10 h-10 rounded-full ${AVATAR_COLORS[current.colorIdx]} flex items-center justify-center text-white text-xs font-bold tracking-wide`}>
-                {current.avatar}
-              </div>
+            {/* Avatar */}
+            <div className={`flex-shrink-0 w-7 h-7 rounded-full ${AVATAR_COLORS[current.colorIdx]} flex items-center justify-center text-white font-bold leading-none`} style={{ fontSize: "9px", letterSpacing: "0.04em" }}>
+              {current.avatar}
+            </div>
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="text-sm text-foreground leading-snug">
-                    <span className="font-bold">{current.name}</span>
-                    {" "}
-                    <span className="text-muted-foreground">from {current.city}</span>
-                    {" "}
-                    <span className="text-foreground">{current.action}</span>
-                    {" "}
-                    <span className="font-semibold text-primary">{current.detail}</span>
-                  </p>
-                  <button
-                    onClick={() => setDismissed(true)}
-                    className="flex-shrink-0 text-muted-foreground hover:text-foreground transition-colors mt-0.5"
-                    aria-label="Dismiss"
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="text-xs text-muted-foreground">{current.ago}</span>
-                  <span className="text-xs text-muted-foreground">·</span>
-                  <span className="text-xs text-muted-foreground flex items-center gap-1">
-                    <Users className="w-3 h-3" /> Blaze Studio
-                  </span>
-                </div>
+            {/* Text — single tight block */}
+            <div className="flex-1 min-w-0">
+              <p className="text-[11px] font-semibold text-foreground leading-tight truncate">
+                <span className="font-bold">{current.name}</span>
+                <span className="text-muted-foreground font-normal"> {current.action} </span>
+                <span className="text-primary font-semibold">{current.detail}</span>
+              </p>
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+                <span className="text-[10px] text-muted-foreground truncate">{current.city} · {current.ago}</span>
               </div>
             </div>
+
+            {/* Dismiss */}
+            <button
+              onClick={() => setDismissed(true)}
+              aria-label="Dismiss"
+              className="flex-shrink-0 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+            >
+              <X className="w-3 h-3" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
