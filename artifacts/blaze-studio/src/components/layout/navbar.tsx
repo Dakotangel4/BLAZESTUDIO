@@ -20,6 +20,19 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location]);
+
   const navLinks = [
     { name: "Services", path: "/services" },
     { name: "Process", path: "/services", scrollId: "process" },
@@ -87,31 +100,41 @@ export default function Navbar() {
       {/* Mobile Nav */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", bounce: 0, duration: 0.4 }}
-            className="fixed inset-y-0 right-0 w-full sm:w-80 bg-background shadow-2xl border-l z-40 flex flex-col pt-24 px-6 pb-6"
-          >
-            <ul className="flex flex-col gap-6">
-              {navLinks.map((link) => (
-                <li key={link.name}>
-                  <button
-                    onClick={() => handleClick(link.path, link.scrollId)}
-                    className="text-2xl font-bold text-foreground hover:text-primary transition-colors text-left w-full"
-                  >
-                    {link.name}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-auto">
-              <Button onClick={goToContactForm} size="lg" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
-                Get Free Audit
-              </Button>
-            </div>
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="md:hidden fixed inset-0 bg-black/50 z-[55]"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+              className="md:hidden fixed inset-y-0 right-0 w-[85%] max-w-sm bg-white shadow-2xl border-l z-[60] flex flex-col pt-24 px-6 pb-6"
+            >
+              <ul className="flex flex-col gap-6">
+                {navLinks.map((link) => (
+                  <li key={link.name}>
+                    <button
+                      onClick={() => handleClick(link.path, link.scrollId)}
+                      className="text-2xl font-bold text-foreground hover:text-primary transition-colors text-left w-full"
+                    >
+                      {link.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-auto">
+                <Button onClick={goToContactForm} size="lg" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                  Get Free Audit
+                </Button>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </header>
