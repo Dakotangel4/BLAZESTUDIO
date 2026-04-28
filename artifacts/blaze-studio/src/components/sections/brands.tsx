@@ -1,68 +1,192 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import {
+  Cpu, ShoppingBag, Store, BarChart3, Building2, Truck,
+  Heart, Leaf, BookOpen, Wallet, Sparkles, Hammer,
+  Sun, Activity, CalendarDays, Package,
+} from "lucide-react";
 
 interface Brand {
   name: string;
   industry: string;
-  symbol: string;
+  Icon: React.ElementType;
+  iconColor: string;
+  iconBg: string;
+  borderColor: string;
+  hoverBorder: string;
+  nameSuffix?: string;
 }
 
 const BRANDS: Brand[] = [
-  { name: "NovaTech", industry: "SaaS & Tech", symbol: "◈" },
-  { name: "Konga Pro", industry: "E-Commerce", symbol: "◆" },
-  { name: "LagosMart", industry: "Retail", symbol: "◉" },
-  { name: "PrimeEdge", industry: "Consulting", symbol: "▲" },
-  { name: "Zenith Realty", industry: "Real Estate", symbol: "⬡" },
-  { name: "SwiftCourier", industry: "Logistics", symbol: "◎" },
-  { name: "HealthBridge", industry: "Healthcare", symbol: "✦" },
-  { name: "AgroLink", industry: "AgriTech", symbol: "◇" },
-  { name: "EduSpark", industry: "EdTech", symbol: "◈" },
-  { name: "VaultFinance", industry: "Fintech", symbol: "▪" },
-  { name: "LuxeStudio", industry: "Fashion", symbol: "◆" },
-  { name: "BuildRight", industry: "Construction", symbol: "▲" },
-  { name: "SolarRise", industry: "Energy", symbol: "◉" },
-  { name: "MediCore", industry: "Med-Tech", symbol: "✦" },
-  { name: "EventHub", industry: "Events", symbol: "⬡" },
-  { name: "CargoPilot", industry: "Freight", symbol: "◎" },
+  {
+    name: "Nova", nameSuffix: "Tech",
+    industry: "SaaS & Technology",
+    Icon: Cpu,
+    iconColor: "text-violet-400",
+    iconBg: "bg-violet-500/10",
+    borderColor: "border-violet-500/15",
+    hoverBorder: "hover:border-violet-400/40",
+  },
+  {
+    name: "Konga", nameSuffix: " Pro",
+    industry: "E-Commerce",
+    Icon: ShoppingBag,
+    iconColor: "text-orange-400",
+    iconBg: "bg-orange-500/10",
+    borderColor: "border-orange-500/15",
+    hoverBorder: "hover:border-orange-400/40",
+  },
+  {
+    name: "Lagos", nameSuffix: "Mart",
+    industry: "Retail",
+    Icon: Store,
+    iconColor: "text-sky-400",
+    iconBg: "bg-sky-500/10",
+    borderColor: "border-sky-500/15",
+    hoverBorder: "hover:border-sky-400/40",
+  },
+  {
+    name: "Prime", nameSuffix: "Edge",
+    industry: "Consulting",
+    Icon: BarChart3,
+    iconColor: "text-emerald-400",
+    iconBg: "bg-emerald-500/10",
+    borderColor: "border-emerald-500/15",
+    hoverBorder: "hover:border-emerald-400/40",
+  },
+  {
+    name: "Zenith", nameSuffix: " Realty",
+    industry: "Real Estate",
+    Icon: Building2,
+    iconColor: "text-amber-400",
+    iconBg: "bg-amber-500/10",
+    borderColor: "border-amber-500/15",
+    hoverBorder: "hover:border-amber-400/40",
+  },
+  {
+    name: "Swift", nameSuffix: "Courier",
+    industry: "Logistics",
+    Icon: Truck,
+    iconColor: "text-rose-400",
+    iconBg: "bg-rose-500/10",
+    borderColor: "border-rose-500/15",
+    hoverBorder: "hover:border-rose-400/40",
+  },
+  {
+    name: "Health", nameSuffix: "Bridge",
+    industry: "Healthcare",
+    Icon: Heart,
+    iconColor: "text-pink-400",
+    iconBg: "bg-pink-500/10",
+    borderColor: "border-pink-500/15",
+    hoverBorder: "hover:border-pink-400/40",
+  },
+  {
+    name: "Agro", nameSuffix: "Link",
+    industry: "AgriTech",
+    Icon: Leaf,
+    iconColor: "text-green-400",
+    iconBg: "bg-green-500/10",
+    borderColor: "border-green-500/15",
+    hoverBorder: "hover:border-green-400/40",
+  },
+  {
+    name: "Edu", nameSuffix: "Spark",
+    industry: "Education Tech",
+    Icon: BookOpen,
+    iconColor: "text-indigo-400",
+    iconBg: "bg-indigo-500/10",
+    borderColor: "border-indigo-500/15",
+    hoverBorder: "hover:border-indigo-400/40",
+  },
+  {
+    name: "Vault", nameSuffix: "Finance",
+    industry: "Fintech",
+    Icon: Wallet,
+    iconColor: "text-teal-400",
+    iconBg: "bg-teal-500/10",
+    borderColor: "border-teal-500/15",
+    hoverBorder: "hover:border-teal-400/40",
+  },
+  {
+    name: "Luxe", nameSuffix: "Studio",
+    industry: "Fashion & Lifestyle",
+    Icon: Sparkles,
+    iconColor: "text-fuchsia-400",
+    iconBg: "bg-fuchsia-500/10",
+    borderColor: "border-fuchsia-500/15",
+    hoverBorder: "hover:border-fuchsia-400/40",
+  },
+  {
+    name: "Build", nameSuffix: "Right",
+    industry: "Construction",
+    Icon: Hammer,
+    iconColor: "text-yellow-400",
+    iconBg: "bg-yellow-500/10",
+    borderColor: "border-yellow-500/15",
+    hoverBorder: "hover:border-yellow-400/40",
+  },
+  {
+    name: "Solar", nameSuffix: "Rise",
+    industry: "Clean Energy",
+    Icon: Sun,
+    iconColor: "text-orange-300",
+    iconBg: "bg-orange-400/10",
+    borderColor: "border-orange-400/15",
+    hoverBorder: "hover:border-orange-300/40",
+  },
+  {
+    name: "Medi", nameSuffix: "Core",
+    industry: "Medical Tech",
+    Icon: Activity,
+    iconColor: "text-red-400",
+    iconBg: "bg-red-500/10",
+    borderColor: "border-red-500/15",
+    hoverBorder: "hover:border-red-400/40",
+  },
+  {
+    name: "Event", nameSuffix: "Hub",
+    industry: "Events & Experiences",
+    Icon: CalendarDays,
+    iconColor: "text-cyan-400",
+    iconBg: "bg-cyan-500/10",
+    borderColor: "border-cyan-500/15",
+    hoverBorder: "hover:border-cyan-400/40",
+  },
+  {
+    name: "Cargo", nameSuffix: "Pilot",
+    industry: "Freight & Shipping",
+    Icon: Package,
+    iconColor: "text-lime-400",
+    iconBg: "bg-lime-500/10",
+    borderColor: "border-lime-500/15",
+    hoverBorder: "hover:border-lime-400/40",
+  },
 ];
 
-const COLORS = [
-  "from-orange-500/5 to-orange-500/10 border-orange-500/15 hover:border-orange-500/30",
-  "from-violet-500/5 to-violet-500/10 border-violet-500/15 hover:border-violet-500/30",
-  "from-sky-500/5 to-sky-500/10 border-sky-500/15 hover:border-sky-500/30",
-  "from-emerald-500/5 to-emerald-500/10 border-emerald-500/15 hover:border-emerald-500/30",
-  "from-amber-500/5 to-amber-500/10 border-amber-500/15 hover:border-amber-500/30",
-  "from-rose-500/5 to-rose-500/10 border-rose-500/15 hover:border-rose-500/30",
-  "from-teal-500/5 to-teal-500/10 border-teal-500/15 hover:border-teal-500/30",
-  "from-indigo-500/5 to-indigo-500/10 border-indigo-500/15 hover:border-indigo-500/30",
-];
-
-const SYMBOL_COLORS = [
-  "text-orange-400", "text-violet-400", "text-sky-400", "text-emerald-400",
-  "text-amber-400", "text-rose-400", "text-teal-400", "text-indigo-400",
-];
-
-function BrandCard({ brand, index }: { brand: Brand; index: number }) {
-  const color = COLORS[index % COLORS.length];
-  const symColor = SYMBOL_COLORS[index % SYMBOL_COLORS.length];
-
+function BrandCard({ brand }: { brand: Brand }) {
   return (
     <div
       className={`
-        group flex-shrink-0 flex items-center gap-3 px-6 py-4 mx-3
-        rounded-xl border bg-gradient-to-br ${color}
-        backdrop-blur-sm transition-all duration-300 cursor-default
-        hover:scale-105 hover:shadow-lg
+        group flex-shrink-0 flex items-center gap-3.5 px-5 py-3.5 mx-3
+        rounded-2xl border bg-white/[0.03] backdrop-blur-sm
+        ${brand.borderColor} ${brand.hoverBorder}
+        shadow-sm hover:shadow-md
+        transition-all duration-300 cursor-default hover:scale-[1.04] hover:bg-white/[0.06]
       `}
     >
-      <span className={`text-lg font-bold ${symColor} opacity-70 group-hover:opacity-100 transition-opacity`}>
-        {brand.symbol}
-      </span>
-      <div>
-        <p className="text-sm font-bold text-foreground/80 group-hover:text-foreground whitespace-nowrap transition-colors leading-none mb-0.5">
-          {brand.name}
+      {/* Icon logo mark */}
+      <div className={`flex-shrink-0 w-10 h-10 rounded-xl ${brand.iconBg} flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}>
+        <brand.Icon className={`w-5 h-5 ${brand.iconColor}`} strokeWidth={1.75} />
+      </div>
+
+      {/* Brand name + industry */}
+      <div className="min-w-0">
+        <p className="text-sm font-black text-foreground/75 group-hover:text-foreground whitespace-nowrap transition-colors leading-none tracking-tight">
+          <span>{brand.name}</span>
+          <span className={`${brand.iconColor} opacity-80`}>{brand.nameSuffix}</span>
         </p>
-        <p className="text-[10px] font-medium text-muted-foreground/60 whitespace-nowrap tracking-wide uppercase">
+        <p className="text-[10px] font-semibold text-muted-foreground/50 whitespace-nowrap tracking-widest uppercase mt-1">
           {brand.industry}
         </p>
       </div>
@@ -75,25 +199,18 @@ function MarqueeRow({ brands, reverse = false }: { brands: Brand[]; reverse?: bo
 
   return (
     <div className="relative flex overflow-hidden w-full">
-      {/* Left fade */}
-      <div className="absolute left-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-r from-background to-transparent pointer-events-none" />
-      {/* Right fade */}
-      <div className="absolute right-0 top-0 bottom-0 w-24 z-10 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+      <div className="absolute left-0 top-0 bottom-0 w-28 z-10 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-28 z-10 bg-gradient-to-l from-background to-transparent pointer-events-none" />
 
       <motion.div
         className="flex items-center"
         animate={{ x: reverse ? ["0%", "50%"] : ["0%", "-50%"] }}
         transition={{
-          x: {
-            repeat: Infinity,
-            repeatType: "loop",
-            duration: 28,
-            ease: "linear",
-          },
+          x: { repeat: Infinity, repeatType: "loop", duration: 32, ease: "linear" },
         }}
       >
         {doubled.map((brand, i) => (
-          <BrandCard key={`${brand.name}-${i}`} brand={brand} index={i % brands.length} />
+          <BrandCard key={`${brand.name}-${i}`} brand={brand} />
         ))}
       </motion.div>
     </div>
@@ -109,6 +226,7 @@ export default function Brands() {
 
   return (
     <section className="py-20 bg-background overflow-hidden" ref={ref}>
+      {/* Heading */}
       <div className="container mx-auto px-4 md:px-6 mb-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -120,7 +238,6 @@ export default function Brands() {
             <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
             Trusted by Businesses Across Nigeria
           </span>
-
           <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight">
             Brands That Choose <span className="text-primary">Blaze Studio</span>
           </h2>
