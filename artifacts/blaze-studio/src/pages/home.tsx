@@ -8,6 +8,7 @@ import Process from "@/components/sections/process";
 import Portfolio from "@/components/sections/portfolio";
 import Testimonials from "@/components/sections/testimonials";
 import WhyUs from "@/components/sections/why-us";
+import Stats from "@/components/sections/stats";
 import Faq from "@/components/sections/faq";
 import Cta from "@/components/sections/cta";
 import ContactForm from "@/components/sections/contact-form";
@@ -21,6 +22,7 @@ export default function Home() {
       <Navbar />
       <main className="flex-1">
         <Hero />
+        <Stats />
         <Problem />
         <Services />
         <Process />
