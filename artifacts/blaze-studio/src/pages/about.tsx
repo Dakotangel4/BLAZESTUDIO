@@ -90,7 +90,7 @@ export default function AboutPage() {
                 <Flame className="w-3.5 h-3.5" />
                 ABOUT BLAZE STUDIO
               </div>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05] mb-6">
+              <h1 className="text-[clamp(2.25rem,8vw,4.5rem)] lg:text-7xl font-extrabold tracking-[-0.02em] text-foreground leading-[1.05] mb-6 text-balance break-words">
                 We build the websites that <span className="text-primary">make the phone ring.</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">

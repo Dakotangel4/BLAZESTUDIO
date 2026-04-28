@@ -206,7 +206,7 @@ export default function BlogPage() {
                 <Sparkles className="w-3.5 h-3.5" />
                 BLAZE INSIGHTS
               </div>
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.05] mb-5">
+              <h1 className="text-[clamp(2.25rem,8vw,4.5rem)] lg:text-7xl font-extrabold tracking-[-0.02em] text-foreground leading-[1.05] mb-5 text-balance break-words">
                 Notes from the <span className="text-primary">build floor.</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl">
