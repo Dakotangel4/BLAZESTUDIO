@@ -12,6 +12,7 @@ import Faq from "@/components/sections/faq";
 import Cta from "@/components/sections/cta";
 import ContactForm from "@/components/sections/contact-form";
 import WhatsAppFloat from "@/components/ui/whatsapp-float";
+import LiveNotifications from "@/components/ui/live-notifications";
 
 export default function Home() {
   return (
@@ -31,6 +32,7 @@ export default function Home() {
       </main>
       <Footer />
       <WhatsAppFloat />
+      <LiveNotifications />
     </div>
   );
 }
