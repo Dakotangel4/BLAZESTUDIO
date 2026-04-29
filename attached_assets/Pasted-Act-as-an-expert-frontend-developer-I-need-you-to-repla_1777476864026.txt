@@ -1,0 +1,180 @@
+Act as an expert frontend developer.
+
+I need you to replace my current homepage hero section with a modern, 
+responsive full-screen hero section featuring an animated canvas-based 
+background that communicates BOTH the Blaze Studio brand identity 
+AND what we do — web development, app development, digital marketing.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TECH STACK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Semantic HTML5 only
+- Clean, modern CSS3 — no frameworks, no libraries
+- Vanilla JavaScript for the canvas animation
+- Single self-contained index.html file
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BUSINESS CONTEXT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Blaze Studio is a premium creative agency offering web development, 
+app development, and digital marketing. The animation must communicate 
+TWO things simultaneously:
+
+  1. BRAND: "Blaze" — heat, energy, ignition, momentum
+  2. WORK: Digital product builders — code, systems, UI, technology
+
+A visitor must understand within 3 seconds what we do just from 
+the visual — without reading a single word.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. VIDEO INTEGRATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Embed an HTML5 <video> tag as the deepest background layer
+- Cover entire viewport using object-fit: cover, perfectly centered
+- Must include: autoplay, loop, muted, playsinline
+- Position absolutely behind all canvas and content layers
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. CANVAS ANIMATION — THE CORE VISUAL:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Build a dual-layer canvas animation that merges fire with tech:
+
+LAYER A — TECH GRID (bottom layer of canvas):
+- Draw a faint perspective grid lines receding toward the 
+  horizon center of the screen — like a digital ground plane
+- Grid lines in very subtle orange-tinted white 
+  (rgba(255, 140, 0, 0.08)) — barely visible, atmospheric
+- Animate the grid slowly scrolling toward the viewer 
+  (z-axis illusion, infinite loop) — speed: slow and smooth
+- Overlay faint floating code characters (0s and 1s, or 
+  short snippets like </>, {}, (), fn) drifting upward 
+  slowly — opacity 0.06 to 0.12, monospace font, 
+  color: rgba(255, 160, 50, 0.1)
+- This layer must NOT overpower — it is atmospheric only
+
+LAYER B — EMBER PARTICLES (top layer of canvas):
+- Animated ember/spark particles rising from the bottom
+- Colors: deep orange (#FF4500), amber (#FFA500), 
+  electric white (#FFFFFF) — fade out as they rise
+- Particles vary in: size (1px–4px), speed, opacity, drift angle
+- Some particles (1 in 8) should leave a brief fading trail 
+  behind them — like a spark streak
+- At the base of the screen, a slow radial heat glow pulses 
+  from lower-center — breathing in and out every 5 seconds
+- Particle count: 120 desktop / 60 mobile (below 768px)
+
+COMBINED EFFECT:
+The result should read as: fire and energy rising through 
+a digital world — unmistakably tech, unmistakably Blaze.
+
+Canvas technical rules:
+- Use requestAnimationFrame only — no setInterval
+- Resize on window resize (debounced 150ms)
+- Initialize on DOMContentLoaded — no flash on load
+- devicePixelRatio capped at 2 for performance
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. LAYER STACKING ORDER (bottom to top):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [1] <video>        — deepest background
+  [2] <canvas>       — tech grid + ember particles
+  [3] <div> overlay  — rgba(0, 0, 0, 0.45) dark veil
+  [4] Hero content   — headline, subheadline, CTAs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. HERO CONTENT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  - Eyebrow tag: "WEB • APP • DIGITAL MARKETING"
+  - <h1>: "We Build Digital Systems That Ignite Growth"
+  - <p>: "Blaze Studio designs and engineers high-performance websites, 
+apps, and marketing systems built to capture attention, scale fast, 
+and dominate your market."
+  - Primary CTA: "Start a Project"
+  - Secondary CTA (text link): "See Our Work →"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. TYPOGRAPHY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Load from Google Fonts:
+  - Headline: "Bebas Neue" or "Anton" — bold, tall, impactful
+  - Body: "DM Sans" or "Outfit" — clean and modern
+
+  - Headline: 80px desktop / 44px mobile, white, letter-spacing 2px
+  - Eyebrow: 11px, uppercase, wide tracking, orange (#FFA500)
+  - Subheadline: 18px, #CCCCCC, max-width 560px, centered
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. CTA BUTTON:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Primary button:
+"Start a Project":
+  - Background: linear-gradient(#FF4500 → #FFA500)
+  - Text: white, bold, 14px uppercase
+  - Padding: 16px 36px / Border-radius: 4px (sharp, not pill)
+  - Hover: brightness up, scale(1.03), orange glow box-shadow
+  - Transition: 0.3s ease
+
+Secondary:
+"View Case Studies →" (replace “See Our Work”)
+
+
+7. ADD TRUST / AUTHORITY MICRO-ELEMENT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Below the buttons, add a subtle line like:
+
+"Trusted by fast-growing brands and ambitious founders"
+
+Style:
+- small text
+- low opacity (0.6)
+- centered
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. LOAD ANIMATIONS (CSS staggered):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Fade + slide up on load:
+  1. Eyebrow — delay 0.2s
+  2. H1 — delay 0.4s
+  3. Subheadline — delay 0.6s
+  4. Buttons — delay 0.8s
+Each: opacity 0→1 + translateY(20px)→0, duration 0.7s ease-out
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. PERFORMANCE & FALLBACKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Static CSS fallback background-image on the hero section
+- Must display while video loads or if autoplay is blocked
+- Fallback must match the dark, fiery Blaze brand aesthetic
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+10. ACCESSIBILITY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@media (prefers-reduced-motion: reduce):
+  - Hide <video> and <canvas> entirely
+  - Show static fallback image
+  - All content and CTAs remain fully visible and functional
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+11. ADD MICRO INTERACTION (IMPORTANT):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+On mouse move (desktop only):
+- Slight parallax shift:
+   - content moves VERY subtly (translateY or translateX max 5px)
+   - canvas particles react slightly to cursor direction
+
+Keep it extremely subtle — premium feel only.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HARD RULES — DO NOT BREAK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- No purple gradients
+- No glassmorphism or frosted cards  
+- No floating blobs or pastel shapes
+- No generic SaaS or agency template aesthetics
+- The tech grid and code characters must be subtle —
+  atmosphere only, never competing with the headline
+- The fire particles must feel premium, not cartoonish
+- Code must be clean, well-commented, production-ready
+- Hero height: 100vh minimum
+- Fully responsive: mobile, tablet, desktop
