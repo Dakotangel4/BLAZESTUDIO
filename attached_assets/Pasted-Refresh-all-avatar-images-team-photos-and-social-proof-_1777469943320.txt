@@ -1,0 +1,74 @@
+Refresh all avatar images, team photos, and social proof visuals across the entire homepage so that every human image is consistently represented by African professionals. No section should have non-African faces while others do — the visual identity must be 100% consistent from top to bottom of the page.
+Sections to update (cover all that apply):
+1. Social Proof / "Trusted By" Avatar Row:
+
+Replace all small circular avatars with African professional faces
+Mix of men and women, various ages (25–50), all clearly professional
+Avatars should look like real clients/customers — not models
+Maintain the same circular crop, size, and layout as existing avatars
+
+2. Testimonials Section:
+
+Every testimonial card with a profile photo must show an African professional
+Match the person's name and role to an appropriate professional appearance
+A CEO should look executive, a startup founder should look sharp but approachable, a marketing manager should look creative
+Keep the same card layout, border radius, and image dimensions
+
+3. Team / Meet the Team Section (if present):
+
+All team member photos must be African professionals
+Consistent lighting, background style, and photo quality across all team cards
+Mix of male and female representation
+Smart casual to business professional attire
+
+4. Case Study or Client Feature Sections (if present):
+
+Any client-facing human imagery updated to African professionals
+Industry-appropriate appearance per sector (tech, finance, health, retail, etc.)
+
+5. Hero or Banner Sections with Human Faces:
+
+Any secondary banners or split-layout sections with people must also be updated
+Consistent with the main hero image update already done
+
+Professional Sectors to represent across all avatars and photos:
+
+Tech & Software — developer or product manager look, smart casual
+Finance & Banking — sharp, suit or business formal, confident
+Healthcare — lab coat or medical scrubs, professional and trustworthy
+Marketing & Creative — stylish, modern, creative agency energy
+Legal & Consulting — formal, authoritative, polished
+Retail & E-commerce — friendly, approachable, business casual
+Education & Training — warm, professional, approachable
+Real Estate — confident, well-dressed, client-facing energy
+
+Image Standards for all replacements:
+
+All images must be high resolution and sharp
+Consistent lighting style across all avatars — no mixing dark moody shots with bright ones
+For circular avatars — clean background preferred (white, grey, or soft gradient)
+For larger photos — modern office, studio, or neutral professional background
+No watermarks, no obvious AI artifacts, no stock photo stiffness
+Source from: Unsplash, Pexels, or Generated Photos using search terms like:
+
+"African professional headshot"
+"Black business woman portrait"
+"Nigerian professional male portrait"
+"African doctor headshot"
+"Black finance executive portrait"
+"African software developer"
+
+
+
+Do not:
+
+Mix African and non-African faces across the same section
+Use the same photo twice anywhere on the page
+Use low resolution, pixelated, or heavily filtered images
+Leave any human image on the homepage untouched after this update
+
+Final check after update:
+
+Scroll the entire homepage and confirm zero non-African faces remain
+Confirm all images load correctly, are properly cropped, and fit their containers
+Confirm no layout is broken on mobile or desktop after image swap
