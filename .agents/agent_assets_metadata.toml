@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "9UKN59fqSvSnpHr0niSjQ"
@@ -42,3 +41,21 @@ id = "MmQsho1SvaBZGKxj6MOke"
 uri = "file://artifacts/blaze-studio/src/assets/test-3.png"
 type = "image"
 title = "Nigerian male CEO headshot"
+
+[[outputs]]
+id = "H0nbvdA3eyJeFaa6gHi_v"
+uri = "file://artifacts/blaze-studio/src/assets/portfolio-1.png"
+type = "image"
+title = "Portfolio Project 1"
+
+[[outputs]]
+id = "Zq16lgYW7WRaqvA2dXkPX"
+uri = "file://artifacts/blaze-studio/src/assets/portfolio-2.png"
+type = "image"
+title = "Portfolio Project 2"
+
+[[outputs]]
+id = "ugN9wCwevjwTmNCcd2rbS"
+uri = "file://artifacts/blaze-studio/src/assets/portfolio-3.png"
+type = "image"
+title = "Portfolio Project 3"
