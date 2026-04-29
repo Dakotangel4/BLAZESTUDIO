@@ -1,0 +1,46 @@
+Wire the public-facing blog pages to dynamically read from the admin-managed posts in the database. Anything published or scheduled from the admin panel should automatically appear on the live site in real time. Unpublished drafts must never be visible publicly.
+Public Blog Listing Page (/blog):
+
+Fetch and display all posts where status is Published and publish date is current or past
+Hero section at the top featuring the most recent or pinned post — large featured image, title, excerpt, category badge, author, date, and reading time
+Below hero: responsive grid of blog cards (2–3 columns on desktop, 1 on mobile)
+Each card shows: featured image, category badge, title, short excerpt, author avatar + name, date published, and reading time
+Category filter tabs at the top (All, + each active category) — clicking filters posts without page reload
+Search bar to filter posts by title or keyword in real time
+Pagination or infinite scroll for large post volumes
+Fully handles empty state — friendly message if no posts are published yet
+Loading skeletons while posts are fetching
+Page metadata: dynamic <title> and <meta description> for SEO
+
+Public Single Post Page (/blog/:slug):
+
+Fetch the correct post by its slug from the database
+Return proper 404 page if slug doesn't exist or post is not published
+Full post layout including: featured image (full width or hero style), category badge, title (H1), author info with avatar, date published, last updated date if edited, reading time
+Full rich text content rendered correctly — all headings, lists, blockquotes, code blocks, images, and links styled to match the site design
+SEO fully wired: dynamic <title>, <meta description>, Open Graph tags (og:title, og:description, og:image) and Twitter Card tags — all pulling from the post's meta fields set in the admin
+Structured data (JSON-LD) for Article schema — helps Google display rich results
+Estimated reading time displayed near the top
+Related posts section at the bottom — 2 to 3 posts from the same category, excluding current post
+Share buttons — Twitter/X, LinkedIn, Facebook, and copy link
+Smooth scroll progress bar at the top of the page while reading
+Previous and next post navigation at the bottom
+
+Scheduled Posts:
+
+Posts with status Scheduled should automatically become publicly visible once their scheduled publish date and time is reached
+Do not expose scheduled posts before their publish time under any circumstance
+
+Performance & Technical Standards:
+
+Use SSR or SSG with revalidation (if Next.js — use ISR with a short revalidate window so new posts appear quickly without full redeploy)
+If not Next.js — fetch posts server-side on each request so live changes reflect immediately
+All images optimized and lazy loaded
+Pages must be fully crawlable by Google — no client-side-only rendering for post content
+Canonical tags on every post page to prevent duplicate content issues
+Sitemap should include all published blog post URLs and auto-update as new posts are published
+
+Consistency:
+
+Public blog design must match the existing site's design system — fonts, colors, spacing, navbar, and footer all consistent
+No hardcoded or static blog content anywhere — everything must come from the database
