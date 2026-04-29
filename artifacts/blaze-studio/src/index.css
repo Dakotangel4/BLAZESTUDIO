@@ -144,3 +144,91 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* ============================================================
+   Hero — engineered fire / embers section
+   Layered effects: fire glow, low-opacity grid, scan lines, CTA glow
+   ============================================================ */
+
+/* [Layer 1] Animated fire-glow background. Multiple radial gradients
+   slowly drifting to simulate controlled embers without a video file.
+   Swap the .hero-fire-bg div for a <video> element if a clip is added. */
+.hero-fire-bg {
+  background:
+    radial-gradient(ellipse 65% 60% at 18% 95%,
+      rgba(255, 120, 35, 0.65) 0%,
+      rgba(180, 50, 10, 0.22) 40%,
+      transparent 72%),
+    radial-gradient(ellipse 60% 55% at 82% 100%,
+      rgba(255, 160, 70, 0.55) 0%,
+      rgba(160, 40, 10, 0.18) 45%,
+      transparent 78%),
+    radial-gradient(ellipse 90% 70% at 50% 105%,
+      rgba(255, 95, 20, 0.6) 0%,
+      rgba(80, 15, 5, 0.3) 50%,
+      transparent 82%),
+    linear-gradient(180deg, #0a0604 0%, #170805 55%, #34110a 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  animation: hero-fire-drift 18s ease-in-out infinite alternate;
+  filter: saturate(1.1);
+}
+
+@keyframes hero-fire-drift {
+  0% {
+    background-position:
+      0% 100%, 100% 100%, 50% 100%, 0 0;
+    filter: saturate(1.05) brightness(1);
+  }
+  50% {
+    filter: saturate(1.2) brightness(1.08);
+  }
+  100% {
+    background-position:
+      6% 95%, 94% 95%, 52% 97%, 0 0;
+    filter: saturate(1.12) brightness(1.03);
+  }
+}
+
+/* Subtle UI-grid overlay — engineered/technical credibility */
+.hero-grid-overlay {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
+  opacity: 0.5;
+}
+
+/* Ultra-subtle horizontal scan lines */
+.hero-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+}
+
+/* Primary CTA glow on hover */
+.cta-glow {
+  box-shadow:
+    0 8px 24px -8px hsl(var(--primary) / 0.55),
+    0 0 0 0 hsl(var(--primary) / 0);
+  transition: box-shadow 220ms ease, transform 180ms ease, background-color 180ms ease;
+}
+.cta-glow:hover {
+  box-shadow:
+    0 12px 32px -6px hsl(var(--primary) / 0.7),
+    0 0 24px 2px hsl(var(--primary) / 0.45);
+}
+
+/* Accessibility — kill expensive animations for reduced-motion users */
+@media (prefers-reduced-motion: reduce) {
+  .hero-fire-bg {
+    animation: none;
+  }
+}
