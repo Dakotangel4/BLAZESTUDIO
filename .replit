@@ -75,3 +75,11 @@ externalPort = 3002
 [[ports]]
 localPort = 21028
 externalPort = 3000
+
+[userenv]
+
+[userenv.shared]
+ADMIN_SESSION_SECRET = "d8b3e48e61eb0fe30ce21c606ee1b3f0783db2a23a8aed602361e687eb38cc09"
+
+[nix]
+channel = "stable-25_05"

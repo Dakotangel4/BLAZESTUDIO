@@ -54,3 +54,92 @@ export const CreateContactSubmissionBody = zod.object({
     .max(createContactSubmissionBodyMessageMax),
   source: zod.string().max(createContactSubmissionBodySourceMax).optional(),
 });
+
+/**
+ * Authenticates with the admin password and starts a session.
+ * @summary Admin login
+ */
+export const adminLoginBodyPasswordMax = 500;
+
+export const AdminLoginBody = zod.object({
+  password: zod.string().min(1).max(adminLoginBodyPasswordMax),
+});
+
+export const AdminLoginResponse = zod.object({
+  authenticated: zod.boolean(),
+});
+
+/**
+ * Clears the admin session.
+ * @summary Admin logout
+ */
+export const AdminLogoutResponse = zod.object({
+  authenticated: zod.boolean(),
+});
+
+/**
+ * Returns whether the caller has a valid admin session.
+ * @summary Read admin session
+ */
+export const AdminGetSessionResponse = zod.object({
+  authenticated: zod.boolean(),
+});
+
+/**
+ * Returns every contact submission, newest first. Requires admin session.
+ * @summary List all contact submissions
+ */
+export const AdminListLeadsResponse = zod.object({
+  leads: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      phone: zod.string(),
+      email: zod.string(),
+      website: zod.string().nullish(),
+      service: zod.string(),
+      message: zod.string(),
+      source: zod.string(),
+      status: zod.enum(["new", "reviewed", "responded"]),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * Updates fields on a lead (currently status). Requires admin session.
+ * @summary Update a lead
+ */
+export const AdminUpdateLeadParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminUpdateLeadBody = zod.object({
+  status: zod.enum(["new", "reviewed", "responded"]).optional(),
+});
+
+export const AdminUpdateLeadResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  phone: zod.string(),
+  email: zod.string(),
+  website: zod.string().nullish(),
+  service: zod.string(),
+  message: zod.string(),
+  source: zod.string(),
+  status: zod.enum(["new", "reviewed", "responded"]),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * Deletes a lead permanently. Requires admin session.
+ * @summary Delete a lead
+ */
+export const AdminDeleteLeadParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminDeleteLeadResponse = zod.object({
+  id: zod.number(),
+  deleted: zod.boolean(),
+});

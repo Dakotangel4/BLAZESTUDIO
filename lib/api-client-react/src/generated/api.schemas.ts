@@ -43,6 +43,52 @@ export interface ContactSubmissionResult {
   receivedAt: string;
 }
 
+export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus];
+
+export const LeadStatus = {
+  new: "new",
+  reviewed: "reviewed",
+  responded: "responded",
+} as const;
+
+export interface AdminLoginInput {
+  /**
+   * @minLength 1
+   * @maxLength 500
+   */
+  password: string;
+}
+
+export interface AdminSession {
+  authenticated: boolean;
+}
+
+export interface AdminLead {
+  id: number;
+  name: string;
+  phone: string;
+  email: string;
+  website?: string | null;
+  service: string;
+  message: string;
+  source: string;
+  status: LeadStatus;
+  createdAt: string;
+}
+
+export interface AdminLeadList {
+  leads: AdminLead[];
+}
+
+export interface AdminLeadUpdateInput {
+  status?: LeadStatus;
+}
+
+export interface AdminDeleteResult {
+  id: number;
+  deleted: boolean;
+}
+
 export interface ErrorResponse {
   error: string;
   details?: string[];

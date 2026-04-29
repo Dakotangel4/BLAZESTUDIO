@@ -12,6 +12,8 @@ tags:
     description: Health operations
   - name: contact
     description: Contact form submissions
+  - name: admin
+    description: Admin (password-protected)
 paths:
   /healthz:
     get:
@@ -47,6 +49,143 @@ paths:
                 $ref: "#/components/schemas/ContactSubmissionResult"
         "400":
           description: Invalid submission
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      description: Authenticates with the admin password and starts a session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginInput"
+      responses:
+        "200":
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSession"
+        "401":
+          description: Invalid password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /admin/logout:
+    post:
+      operationId: adminLogout
+      tags: [admin]
+      summary: Admin logout
+      description: Clears the admin session.
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSession"
+  /admin/session:
+    get:
+      operationId: adminGetSession
+      tags: [admin]
+      summary: Read admin session
+      description: Returns whether the caller has a valid admin session.
+      responses:
+        "200":
+          description: Session status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSession"
+  /admin/leads:
+    get:
+      operationId: adminListLeads
+      tags: [admin]
+      summary: List all contact submissions
+      description: Returns every contact submission, newest first. Requires admin session.
+      responses:
+        "200":
+          description: Leads list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLeadList"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /admin/leads/{id}:
+    patch:
+      operationId: adminUpdateLead
+      tags: [admin]
+      summary: Update a lead
+      description: Updates fields on a lead (currently status). Requires admin session.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLeadUpdateInput"
+      responses:
+        "200":
+          description: Updated lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLead"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Lead not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: adminDeleteLead
+      tags: [admin]
+      summary: Delete a lead
+      description: Deletes a lead permanently. Requires admin session.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDeleteResult"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Lead not found
           content:
             application/json:
               schema:
@@ -106,6 +245,84 @@ components:
       required:
         - id
         - receivedAt
+    LeadStatus:
+      type: string
+      enum: [new, reviewed, responded]
+    AdminLoginInput:
+      type: object
+      properties:
+        password:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required:
+        - password
+    AdminSession:
+      type: object
+      properties:
+        authenticated:
+          type: boolean
+      required:
+        - authenticated
+    AdminLead:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        website:
+          type: string
+          nullable: true
+        service:
+          type: string
+        message:
+          type: string
+        source:
+          type: string
+        status:
+          $ref: "#/components/schemas/LeadStatus"
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - phone
+        - email
+        - service
+        - message
+        - source
+        - status
+        - createdAt
+    AdminLeadList:
+      type: object
+      properties:
+        leads:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminLead"
+      required:
+        - leads
+    AdminLeadUpdateInput:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/LeadStatus"
+    AdminDeleteResult:
+      type: object
+      properties:
+        id:
+          type: integer
+        deleted:
+          type: boolean
+      required:
+        - id
+        - deleted
     ErrorResponse:
       type: object
       properties:

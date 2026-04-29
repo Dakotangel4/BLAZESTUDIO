@@ -12,6 +12,9 @@ import BlogPage from "@/pages/blog";
 import BlogPostPage from "@/pages/blog-post";
 import BlogCategoryPage from "@/pages/blog-category";
 import ContactPage from "@/pages/contact";
+import AdminLoginPage from "@/pages/admin-login";
+import AdminLeadsPage from "@/pages/admin-leads";
+import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +30,10 @@ function Router() {
       <Route path="/blog/category/:slug" component={BlogCategoryPage} />
       <Route path="/blog/:slug" component={BlogPostPage} />
       <Route path="/contact" component={ContactPage} />
+      <Route path="/admin/login" component={AdminLoginPage} />
+      <Route path="/admin/leads" component={AdminLeadsPage} />
+      <Route path="/admin" component={AdminLeadsPage} />
+      <Route path="/admin/dashboard" component={AdminLeadsPage} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -40,6 +47,7 @@ function App() {
           <Router />
         </WouterRouter>
         <Toaster />
+        <SonnerToaster richColors closeButton position="top-right" />
       </TooltipProvider>
     </QueryClientProvider>
   );

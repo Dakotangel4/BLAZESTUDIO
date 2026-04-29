@@ -1,0 +1,51 @@
+Here's a complete, detailed prompt you can paste directly into your dev tool or AI assistant:
+
+---
+
+**PROMPT:**
+
+> Build a professional admin dashboard page at `/admin/leads` with full password protection. The page should feel like an enterprise-grade internal tool — clean, data-dense, and functional. Use a dark sidebar layout with a top navbar.
+>
+> **Authentication:**
+> - Password-protected login screen before accessing anything
+> - Session-based auth with a logout button
+> - Simple hardcoded admin password via environment variable
+>
+> **Leads Table:**
+> - Display all contact form submissions from the database
+> - Columns: ID, Full Name, Email, Phone, Message (truncated), Date Submitted, Status (New / Reviewed / Responded)
+> - Clickable row to expand and read full message in a modal
+> - Status can be updated inline via a dropdown
+>
+> **Filtering & Search:**
+> - Search bar (filter by name or email in real time)
+> - Filter by status (All / New / Reviewed / Responded)
+> - Filter by date range (from/to date picker)
+>
+> **Export:**
+> - Export current filtered view to CSV
+> - Export to PDF option
+>
+> **Dashboard Stats (top of page):**
+> - Total leads count
+> - New (unreviewed) leads count
+> - Leads received today
+> - Leads this month
+> - Display as stat cards with icons
+>
+> **Other Admin Page Standards to include:**
+> - Pagination (10, 25, 50 rows per page selector)
+> - Sort by any column (ascending/descending)
+> - Delete lead with confirmation modal
+> - Toast notifications for all actions (status update, delete, export)
+> - Fully responsive (works on tablet and desktop)
+> - Empty state UI when no leads exist
+> - Loading skeletons while data fetches
+> - Timestamps shown in readable format (e.g. "Apr 29, 2026 · 10:42 AM")
+> - Color-coded status badges (red = New, yellow = Reviewed, green = Responded)
+>
+> **Tech:** Use the existing stack of this project. Keep all styles consistent with any existing design system or Tailwind config already in place.
+
+---
+
+That prompt covers everything a production admin panel needs. Paste it as-is and it'll generate something you won't be embarrassed to show a client.
