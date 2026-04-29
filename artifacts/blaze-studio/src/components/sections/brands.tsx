@@ -220,7 +220,10 @@ function MarqueeRow({ brands, reverse = false }: { brands: Brand[]; reverse?: bo
 
 export default function Brands() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  // Positive margin expands the trigger zone — the marquee starts fading
+  // in 240px BEFORE the section enters the viewport, so by the time the
+  // user actually scrolls to it, the rolling cards are already visible.
+  const inView = useInView(ref, { once: true, margin: "240px 0px" });
   const navigate = useNav();
 
   const row1 = BRANDS.slice(0, 8);
@@ -250,22 +253,25 @@ export default function Brands() {
         </motion.div>
       </div>
 
-      {/* Marquee rows */}
+      {/* Marquee rows — visible immediately when the section enters the
+          viewport. The rows are already animating from time zero, so any
+          opacity gating just hides motion the user wants to see. */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.8, delay: 0.3 }}
+        transition={{ duration: 0.35 }}
         className="space-y-4"
       >
         <MarqueeRow brands={row1} reverse={false} />
         <MarqueeRow brands={row2} reverse={true} />
       </motion.div>
 
-      {/* Bottom CTA nudge */}
+      {/* Bottom CTA nudge — short, snappy delay just so it lands AFTER the
+          marquee fade, not the long beat it had before. */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, delay: 0.6 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
         className="mt-14 text-center"
       >
         <p className="text-sm text-muted-foreground">
