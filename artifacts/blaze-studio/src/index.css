@@ -150,43 +150,18 @@
    Layered effects: fire glow, low-opacity grid, scan lines, CTA glow
    ============================================================ */
 
-/* [Layer 1] Animated fire-glow background. Multiple radial gradients
-   slowly drifting to simulate controlled embers without a video file.
-   Swap the .hero-fire-bg div for a <video> element if a clip is added. */
+/* [Layer 0] Static fallback background.
+   - Visible while the video buffers (under the still-loading <video>)
+   - Visible if the video errors out, autoplay is blocked, or the
+     user prefers reduced motion
+   - Same dark ember frame extracted from the hero clip, so the
+     transition into the playing video is invisible */
 .hero-fire-bg {
-  background:
-    radial-gradient(ellipse 65% 60% at 18% 95%,
-      rgba(255, 120, 35, 0.65) 0%,
-      rgba(180, 50, 10, 0.22) 40%,
-      transparent 72%),
-    radial-gradient(ellipse 60% 55% at 82% 100%,
-      rgba(255, 160, 70, 0.55) 0%,
-      rgba(160, 40, 10, 0.18) 45%,
-      transparent 78%),
-    radial-gradient(ellipse 90% 70% at 50% 105%,
-      rgba(255, 95, 20, 0.6) 0%,
-      rgba(80, 15, 5, 0.3) 50%,
-      transparent 82%),
-    linear-gradient(180deg, #0a0604 0%, #170805 55%, #34110a 100%);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
-  animation: hero-fire-drift 18s ease-in-out infinite alternate;
-  filter: saturate(1.1);
-}
-
-@keyframes hero-fire-drift {
-  0% {
-    background-position:
-      0% 100%, 100% 100%, 50% 100%, 0 0;
-    filter: saturate(1.05) brightness(1);
-  }
-  50% {
-    filter: saturate(1.2) brightness(1.08);
-  }
-  100% {
-    background-position:
-      6% 95%, 94% 95%, 52% 97%, 0 0;
-    filter: saturate(1.12) brightness(1.03);
-  }
+  background-color: #080808;
+  background-image: url("/assets/images/hero-fallback.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 /* Headline font — bold, tall, impactful (Bebas Neue) */
@@ -227,9 +202,11 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* Accessibility — kill expensive animations for reduced-motion users */
+/* Accessibility — reduced-motion users see only the static .hero-fire-bg
+   (the still poster frame). The hero component already conditionally
+   skips rendering <video> and <canvas> when reduced motion is preferred. */
 @media (prefers-reduced-motion: reduce) {
   .hero-fire-bg {
-    animation: none;
+    background-image: url("/assets/images/hero-fallback.jpg");
   }
 }

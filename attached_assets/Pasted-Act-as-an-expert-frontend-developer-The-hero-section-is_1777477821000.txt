@@ -1,0 +1,178 @@
+Act as an expert frontend developer.
+
+The hero section is fully built with the canvas animation, 
+layer stack, and video element in place. The video currently 
+points to an external CDN URL. I need you to replace that 
+with a self-hosted local video file so the hero never 
+depends on any third-party CDN being reachable.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OBJECTIVE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Move the ember/fire video clip into the project's own file 
+structure and update the <video> source to reference it locally. 
+The site must load the video entirely from its own assets — 
+zero external dependencies for the hero background.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. FILE STRUCTURE — SET THIS UP:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Create the following folder structure in the project root 
+if it does not already exist:
+
+  /assets
+    /video
+      hero-bg.mp4       ← primary format (H.264, MP4)
+      hero-bg.webm      ← compressed fallback (VP9, WebM)
+    /images
+      hero-fallback.jpg ← static poster/fallback image
+
+The attached_assets/ or uploaded file should be moved and 
+renamed to match this structure exactly.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. UPDATE THE <video> TAG:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Replace the current CDN <source> with local file references:
+
+  <video
+    class="hero-video"
+    autoplay
+    loop
+    muted
+    playsinline
+    preload="auto"
+    poster="assets/images/hero-fallback.jpg"
+  >
+    <source src="assets/video/hero-bg.webm" type="video/webm">
+    <source src="assets/video/hero-bg.mp4" type="video/mp4">
+  </video>
+
+Rules:
+  - WebM listed FIRST — smaller file, faster load on Chrome/Firefox
+  - MP4 listed SECOND — universal fallback for Safari and iOS
+  - poster attribute points to the local static fallback image
+  - No external URLs anywhere in the video element
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. VIDEO FILE OPTIMIZATION RULES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The video files must meet these specs before going live:
+
+  MP4 (hero-bg.mp4):
+  - Codec: H.264
+  - Resolution: 1920x1080 (1080p)
+  - Bitrate: 2–4 Mbps max — do not exceed this
+  - Frame rate: 24–30fps
+  - Audio: stripped completely (muted video needs no audio track)
+  - File size target: under 8MB ideally, 12MB hard limit
+
+  WebM (hero-bg.webm):
+  - Codec: VP9
+  - Resolution: 1920x1080
+  - Bitrate: 1.5–3 Mbps
+  - File size target: under 6MB — WebM should always be lighter
+  - Audio: stripped completely
+
+If only one format is available right now, use MP4. 
+Generate the WebM version using ffmpeg with this command:
+
+  ffmpeg -i hero-bg.mp4 -c:v libvpx-vp9 -b:v 2M \
+  -an -vf scale=1920:1080 assets/video/hero-bg.webm
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. STATIC FALLBACK IMAGE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Generate or export a single frame from the video to use 
+as the poster image:
+
+  ffmpeg -i assets/video/hero-bg.mp4 -ss 00:00:02 \
+  -vframes 1 assets/images/hero-fallback.jpg
+
+This image:
+  - Must be a dark, atmospheric frame — not a bright flash
+  - Compressed to under 200KB (use 80% JPEG quality)
+  - Referenced in both the poster attribute AND the CSS 
+    fallback background-image on the hero section
+
+Update the CSS:
+  .hero {
+    background-image: url('assets/images/hero-fallback.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. MOBILE PERFORMANCE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+On screens below 768px, the browser will still attempt to 
+load the full 1080p file. Add this JavaScript to swap to 
+a lighter mobile-optimized version if one exists:
+
+  const video = document.querySelector('.hero-video');
+  const isMobile = window.innerWidth < 768;
+
+  if (isMobile) {
+    video.querySelectorAll('source').forEach(src => {
+      src.src = src.src.replace('hero-bg', 'hero-bg-mobile');
+    });
+    video.load();
+  }
+
+Also create a mobile-optimized version at 720p and under 4MB:
+  ffmpeg -i assets/video/hero-bg.mp4 -c:v libx264 -b:v 1M \
+  -an -vf scale=1280:720 assets/video/hero-bg-mobile.mp4
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. LAYER STACK — DO NOT TOUCH:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  [1] <video>        — local self-hosted file (z-index: 0)
+  [2] <canvas>       — tech grid + ember particles (z-index: 1)
+  [3] <div> overlay  — rgba(0,0,0,0.45) (z-index: 2)
+  [4] Hero content   — headline, CTAs (z-index: 3)
+
+Only the video source changes. Everything else stays exactly 
+as built. Do NOT modify the canvas, overlay, or hero content.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. JAVASCRIPT ERROR SAFETY NET:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Keep the existing error handler and add a load confirmation:
+
+  video.addEventListener('error', () => {
+    video.style.display = 'none';
+    // hero CSS fallback background-image takes over silently
+  });
+
+  video.addEventListener('canplaythrough', () => {
+    video.style.opacity = '1'; // fade in once buffered
+  });
+
+  // Start video opacity at 0 in CSS, fade to 1 on ready
+  // Prevents black flash before video loads
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. ACCESSIBILITY — KEEP INTACT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@media (prefers-reduced-motion: reduce) rule stays active:
+  - Hide <video> and <canvas>
+  - Static fallback image displays
+  - All hero content fully visible and functional
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DELIVERABLE CHECKLIST:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Confirm each item is done before finishing:
+
+  [ ] /assets/video/ folder created
+  [ ] hero-bg.mp4 and hero-bg.webm present locally
+  [ ] hero-bg-mobile.mp4 created for screens below 768px
+  [ ] hero-fallback.jpg exported and referenced in CSS poster
+  [ ] <video> tag updated — zero external URLs
+  [ ] WebM listed before MP4 in source order
+  [ ] Mobile swap script implemented
+  [ ] canplaythrough fade-in implemented
+  [ ] Error fallback handler in place
+  [ ] Layer z-index stack confirmed intact
+  [ ] Reduced-motion query confirmed active
+  [ ] Code clean, commented, production-ready
