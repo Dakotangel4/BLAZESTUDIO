@@ -366,19 +366,39 @@ export default function Hero() {
           if autoplay is blocked, or for reduced-motion users */}
       <div aria-hidden className="absolute inset-0 z-0 hero-fire-bg" />
 
-      {/* [1] Video — deepest layer above CSS fallback. With no <source>
-          attached yet, it renders transparent and the fire-bg shows through.
-          When a clip is added (drop a <source src="..."/>) it will play. */}
+      {/* [1] Video — real cinematic ember/fire clip from Pexels (free, no
+          attribution required). Primary: "A Burning Embers in the Dark"
+          (1080p24, ~11.6MB). Fallback: "Fire on Black" (1080p25, ~4.9MB).
+          On any error the element hides itself so the .hero-fire-bg below
+          becomes the visible background. The dark inline-SVG poster keeps
+          the screen near-black (#080808) while bytes are loading — never
+          a white flash. */}
       {!reduceMotion && (
         <video
+          className="hero-video absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
+          style={{ objectPosition: "center", backgroundColor: "#080808" }}
           aria-hidden
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
-          className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
-        />
+          preload="auto"
+          poster="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='9'><rect width='100%25' height='100%25' fill='%23080808'/></svg>"
+          onError={(e) => {
+            // Mobile autoplay block / network failure / decode error —
+            // hide the video so the CSS fire fallback takes over cleanly.
+            (e.currentTarget as HTMLVideoElement).style.display = "none";
+          }}
+        >
+          <source
+            src="https://videos.pexels.com/video-files/6093374/6093374-hd_1920_1080_24fps.mp4"
+            type="video/mp4"
+          />
+          <source
+            src="https://videos.pexels.com/video-files/6158961/6158961-hd_1920_1080_25fps.mp4"
+            type="video/mp4"
+          />
+        </video>
       )}
 
       {/* [2] Canvas — tech grid + code chars + embers + heat glow */}

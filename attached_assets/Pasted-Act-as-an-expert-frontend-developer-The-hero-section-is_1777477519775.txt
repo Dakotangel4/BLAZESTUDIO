@@ -1,0 +1,127 @@
+Act as an expert frontend developer.
+
+The hero section is already built with the canvas animation and 
+all layers in place. Now I need you to wire in a REAL cinematic 
+ember/fire video clip into the existing <video> tag so the hero 
+plays an actual video background instead of relying on the CSS 
+fallback image.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OBJECTIVE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Replace the empty or placeholder <video> source with a working, 
+cinematic fire/ember video that plays seamlessly behind the canvas 
+animation and hero content. The video must feel premium — slow, 
+moody, dark-toned fire. Not a stock clip that looks cheap.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. VIDEO SOURCE — FREE LICENSED OPTIONS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Source the video from one of these free, no-attribution-required 
+CDN-hosted sources — link it directly via URL into the <source> tag, 
+NO file downloads required:
+
+Priority order to try:
+  Option A — Pixabay CDN (direct .mp4 link):
+  Search for a dark, slow ember or fire video on Pixabay and 
+  use their direct CDN .mp4 URL in the <source src=""> tag
+
+  Option B — Pexels Video (direct .mp4 link):
+  Use a cinematic dark fire/embers clip from Pexels via their 
+  direct video CDN URL — format:
+  https://player.vimeo.com/external/XXXXXX.mp4 or 
+  https://videos.pexels.com/video-files/XXXXXX/XXXXXX.mp4
+
+  Option C — Coverr.co (free commercial license):
+  Use a fire or abstract dark motion video from Coverr — 
+  direct .mp4 CDN link into <source src="">
+
+Pick whichever option resolves to a valid, fast-loading .mp4 URL.
+Provide both .mp4 and .webm <source> tags if a WebM version exists 
+for broader browser compatibility — .mp4 first, .webm second.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. VIDEO ELEMENT REQUIREMENTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The <video> tag must have ALL of the following:
+  - autoplay
+  - loop
+  - muted
+  - playsinline
+  - preload="auto"
+  - poster=" " (a dark #080808 fallback poster color or image)
+
+CSS on the video element:
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. VIDEO AESTHETIC CRITERIA:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The video MUST match the Blaze Studio brand. Reject any clip that is:
+  - Too bright or washed out (must stay dark-toned)
+  - Cartoonish or low resolution
+  - Fast-cutting or chaotic motion
+  - Generic orange gradient with no real fire texture
+
+The ideal clip is:
+  - Slow-moving real embers, sparks, or deep fire close-up
+  - Dark background — black or near-black
+  - Warm orange and amber tones with occasional white sparks
+  - Cinematic frame rate — smooth, not choppy
+  - Minimum resolution: 1080p
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. LAYER INTEGRITY — DO NOT BREAK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The existing layer stack must remain exactly as built:
+
+  [1] <video>        — real fire/ember clip (z-index: 0)
+  [2] <canvas>       — tech grid + ember particles (z-index: 1)
+  [3] <div> overlay  — rgba(0,0,0,0.45) dark veil (z-index: 2)
+  [4] Hero content   — headline, subheadline, CTAs (z-index: 3)
+
+Do NOT remove or modify the canvas animation. 
+Do NOT touch the overlay or hero content.
+Only wire in the video source and confirm the stacking is intact.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. MOBILE PERFORMANCE HANDLING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+On screens below 768px:
+  - Keep the video playing (playsinline handles iOS)
+  - If the video fails to autoplay on mobile, fall back 
+    gracefully to the CSS static background-image already 
+    defined on the hero section
+  - Do NOT show a blank black screen as fallback under 
+    any circumstance
+
+Implement a JavaScript safety net:
+  const video = document.querySelector('.hero-video');
+  video.addEventListener('error', () => {
+    video.style.display = 'none';
+    // hero CSS fallback background-image takes over
+  });
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. ACCESSIBILITY — KEEP INTACT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The existing @media (prefers-reduced-motion: reduce) rule 
+must remain active:
+  - Hide both <video> and <canvas> if reduced motion is on
+  - Static fallback image displays instead
+  - All hero content stays fully visible
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DELIVERABLE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Show me the updated <video> block with the working source URL
+- Confirm the layer z-index stack is intact
+- Confirm mobile fallback and reduced-motion query are untouched
+- If the CDN URL you chose requires testing, flag it and 
+  provide an alternative backup URL from a second source
+- Code must be clean, commented, production-ready
