@@ -16,6 +16,8 @@ tags:
     description: Admin (password-protected)
   - name: blog
     description: Public-facing blog
+  - name: testimonials
+    description: Public-facing testimonials
 paths:
   /healthz:
     get:
@@ -512,6 +514,160 @@ paths:
                 $ref: "#/components/schemas/AdminDeleteResult"
         "404":
           description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /testimonials:
+    get:
+      operationId: listPublicTestimonials
+      tags: [testimonials]
+      summary: List published testimonials
+      description: Returns all published testimonials in display order.
+      responses:
+        "200":
+          description: Public testimonials list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicTestimonialList"
+  /admin/testimonials:
+    get:
+      operationId: adminListTestimonials
+      tags: [admin]
+      summary: List all testimonials (admin)
+      responses:
+        "200":
+          description: Testimonials list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminTestimonialList"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: adminCreateTestimonial
+      tags: [admin]
+      summary: Create a testimonial
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminTestimonialInput"
+      responses:
+        "201":
+          description: Created testimonial
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminTestimonial"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /admin/testimonials/{id}:
+    get:
+      operationId: adminGetTestimonial
+      tags: [admin]
+      summary: Get a single testimonial
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The testimonial
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminTestimonial"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: adminUpdateTestimonial
+      tags: [admin]
+      summary: Update a testimonial
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminTestimonialUpdateInput"
+      responses:
+        "200":
+          description: Updated testimonial
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminTestimonial"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: adminDeleteTestimonial
+      tags: [admin]
+      summary: Delete a testimonial
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDeleteResult"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /admin/testimonials/reorder:
+    post:
+      operationId: adminReorderTestimonials
+      tags: [admin]
+      summary: Reorder testimonials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminTestimonialReorderInput"
+      responses:
+        "200":
+          description: Reordered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminTestimonialList"
+        "400":
+          description: Invalid input
           content:
             application/json:
               schema:
@@ -1051,6 +1207,212 @@ components:
             $ref: "#/components/schemas/PublicBlogSitemapEntry"
       required:
         - entries
+    AdminTestimonial:
+      type: object
+      properties:
+        id:
+          type: integer
+        clientName:
+          type: string
+        jobTitle:
+          type: string
+        companyName:
+          type: string
+        companyDomain:
+          type: string
+        companyLogoUrl:
+          type: string
+          nullable: true
+        profileImage:
+          type: string
+          nullable: true
+        quote:
+          type: string
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        industry:
+          type: string
+        resultLabel:
+          type: string
+        published:
+          type: boolean
+        displayOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - clientName
+        - jobTitle
+        - companyName
+        - companyDomain
+        - quote
+        - rating
+        - industry
+        - resultLabel
+        - published
+        - displayOrder
+        - createdAt
+        - updatedAt
+    AdminTestimonialList:
+      type: object
+      properties:
+        testimonials:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminTestimonial"
+      required:
+        - testimonials
+    AdminTestimonialInput:
+      type: object
+      properties:
+        clientName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        jobTitle:
+          type: string
+          maxLength: 120
+        companyName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        companyDomain:
+          type: string
+          maxLength: 200
+        companyLogoUrl:
+          type: string
+          maxLength: 1000
+          nullable: true
+        profileImage:
+          type: string
+          nullable: true
+        quote:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        industry:
+          type: string
+          maxLength: 60
+        resultLabel:
+          type: string
+          maxLength: 120
+        published:
+          type: boolean
+        displayOrder:
+          type: integer
+      required:
+        - clientName
+        - companyName
+        - quote
+    AdminTestimonialUpdateInput:
+      type: object
+      properties:
+        clientName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        jobTitle:
+          type: string
+          maxLength: 120
+        companyName:
+          type: string
+          minLength: 1
+          maxLength: 120
+        companyDomain:
+          type: string
+          maxLength: 200
+        companyLogoUrl:
+          type: string
+          maxLength: 1000
+          nullable: true
+        profileImage:
+          type: string
+          nullable: true
+        quote:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        industry:
+          type: string
+          maxLength: 60
+        resultLabel:
+          type: string
+          maxLength: 120
+        published:
+          type: boolean
+        displayOrder:
+          type: integer
+    AdminTestimonialReorderInput:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+          minItems: 1
+      required:
+        - ids
+    PublicTestimonial:
+      type: object
+      properties:
+        id:
+          type: integer
+        clientName:
+          type: string
+        jobTitle:
+          type: string
+        companyName:
+          type: string
+        companyDomain:
+          type: string
+        companyLogoUrl:
+          type: string
+          nullable: true
+        profileImage:
+          type: string
+          nullable: true
+        quote:
+          type: string
+        rating:
+          type: integer
+        industry:
+          type: string
+        resultLabel:
+          type: string
+      required:
+        - id
+        - clientName
+        - jobTitle
+        - companyName
+        - companyDomain
+        - quote
+        - rating
+        - industry
+        - resultLabel
+    PublicTestimonialList:
+      type: object
+      properties:
+        testimonials:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicTestimonial"
+      required:
+        - testimonials
     ErrorResponse:
       type: object
       properties:

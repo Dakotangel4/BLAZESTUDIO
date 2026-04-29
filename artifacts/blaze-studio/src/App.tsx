@@ -17,6 +17,7 @@ import AdminLeadsPage from "@/pages/admin-leads";
 import AdminBlogsPage from "@/pages/admin-blogs";
 import AdminBlogEditPage, { AdminBlogNewPage } from "@/pages/admin-blog-edit";
 import AdminBlogCategoriesPage from "@/pages/admin-blog-categories";
+import AdminTestimonialsPage from "@/pages/admin-testimonials";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/contact" component={ContactPage} />
       <Route path="/admin/login" component={AdminLoginPage} />
       <Route path="/admin/leads" component={AdminLeadsPage} />
+      <Route path="/admin/testimonials" component={AdminTestimonialsPage} />
       <Route path="/admin/blogs/categories" component={AdminBlogCategoriesPage} />
       <Route path="/admin/blogs/new" component={AdminBlogNewPage} />
       <Route path="/admin/blogs/edit/:id" component={AdminBlogEditPage} />

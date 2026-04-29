@@ -560,6 +560,265 @@ export const AdminDeleteBlogPostResponse = zod.object({
 });
 
 /**
+ * Returns all published testimonials in display order.
+ * @summary List published testimonials
+ */
+export const ListPublicTestimonialsResponse = zod.object({
+  testimonials: zod.array(
+    zod.object({
+      id: zod.number(),
+      clientName: zod.string(),
+      jobTitle: zod.string(),
+      companyName: zod.string(),
+      companyDomain: zod.string(),
+      companyLogoUrl: zod.string().nullish(),
+      profileImage: zod.string().nullish(),
+      quote: zod.string(),
+      rating: zod.number(),
+      industry: zod.string(),
+      resultLabel: zod.string(),
+    }),
+  ),
+});
+
+/**
+ * @summary List all testimonials (admin)
+ */
+export const adminListTestimonialsResponseTestimonialsItemRatingMax = 5;
+
+export const AdminListTestimonialsResponse = zod.object({
+  testimonials: zod.array(
+    zod.object({
+      id: zod.number(),
+      clientName: zod.string(),
+      jobTitle: zod.string(),
+      companyName: zod.string(),
+      companyDomain: zod.string(),
+      companyLogoUrl: zod.string().nullish(),
+      profileImage: zod.string().nullish(),
+      quote: zod.string(),
+      rating: zod
+        .number()
+        .min(1)
+        .max(adminListTestimonialsResponseTestimonialsItemRatingMax),
+      industry: zod.string(),
+      resultLabel: zod.string(),
+      published: zod.boolean(),
+      displayOrder: zod.number(),
+      createdAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Create a testimonial
+ */
+export const adminCreateTestimonialBodyClientNameMax = 120;
+
+export const adminCreateTestimonialBodyJobTitleMax = 120;
+
+export const adminCreateTestimonialBodyCompanyNameMax = 120;
+
+export const adminCreateTestimonialBodyCompanyDomainMax = 200;
+
+export const adminCreateTestimonialBodyCompanyLogoUrlMax = 1000;
+
+export const adminCreateTestimonialBodyQuoteMax = 2000;
+
+export const adminCreateTestimonialBodyRatingMax = 5;
+
+export const adminCreateTestimonialBodyIndustryMax = 60;
+
+export const adminCreateTestimonialBodyResultLabelMax = 120;
+
+export const AdminCreateTestimonialBody = zod.object({
+  clientName: zod.string().min(1).max(adminCreateTestimonialBodyClientNameMax),
+  jobTitle: zod.string().max(adminCreateTestimonialBodyJobTitleMax).optional(),
+  companyName: zod
+    .string()
+    .min(1)
+    .max(adminCreateTestimonialBodyCompanyNameMax),
+  companyDomain: zod
+    .string()
+    .max(adminCreateTestimonialBodyCompanyDomainMax)
+    .optional(),
+  companyLogoUrl: zod
+    .string()
+    .max(adminCreateTestimonialBodyCompanyLogoUrlMax)
+    .nullish(),
+  profileImage: zod.string().nullish(),
+  quote: zod.string().min(1).max(adminCreateTestimonialBodyQuoteMax),
+  rating: zod
+    .number()
+    .min(1)
+    .max(adminCreateTestimonialBodyRatingMax)
+    .optional(),
+  industry: zod.string().max(adminCreateTestimonialBodyIndustryMax).optional(),
+  resultLabel: zod
+    .string()
+    .max(adminCreateTestimonialBodyResultLabelMax)
+    .optional(),
+  published: zod.boolean().optional(),
+  displayOrder: zod.number().optional(),
+});
+
+/**
+ * @summary Get a single testimonial
+ */
+export const AdminGetTestimonialParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const adminGetTestimonialResponseRatingMax = 5;
+
+export const AdminGetTestimonialResponse = zod.object({
+  id: zod.number(),
+  clientName: zod.string(),
+  jobTitle: zod.string(),
+  companyName: zod.string(),
+  companyDomain: zod.string(),
+  companyLogoUrl: zod.string().nullish(),
+  profileImage: zod.string().nullish(),
+  quote: zod.string(),
+  rating: zod.number().min(1).max(adminGetTestimonialResponseRatingMax),
+  industry: zod.string(),
+  resultLabel: zod.string(),
+  published: zod.boolean(),
+  displayOrder: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Update a testimonial
+ */
+export const AdminUpdateTestimonialParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const adminUpdateTestimonialBodyClientNameMax = 120;
+
+export const adminUpdateTestimonialBodyJobTitleMax = 120;
+
+export const adminUpdateTestimonialBodyCompanyNameMax = 120;
+
+export const adminUpdateTestimonialBodyCompanyDomainMax = 200;
+
+export const adminUpdateTestimonialBodyCompanyLogoUrlMax = 1000;
+
+export const adminUpdateTestimonialBodyQuoteMax = 2000;
+
+export const adminUpdateTestimonialBodyRatingMax = 5;
+
+export const adminUpdateTestimonialBodyIndustryMax = 60;
+
+export const adminUpdateTestimonialBodyResultLabelMax = 120;
+
+export const AdminUpdateTestimonialBody = zod.object({
+  clientName: zod
+    .string()
+    .min(1)
+    .max(adminUpdateTestimonialBodyClientNameMax)
+    .optional(),
+  jobTitle: zod.string().max(adminUpdateTestimonialBodyJobTitleMax).optional(),
+  companyName: zod
+    .string()
+    .min(1)
+    .max(adminUpdateTestimonialBodyCompanyNameMax)
+    .optional(),
+  companyDomain: zod
+    .string()
+    .max(adminUpdateTestimonialBodyCompanyDomainMax)
+    .optional(),
+  companyLogoUrl: zod
+    .string()
+    .max(adminUpdateTestimonialBodyCompanyLogoUrlMax)
+    .nullish(),
+  profileImage: zod.string().nullish(),
+  quote: zod.string().min(1).max(adminUpdateTestimonialBodyQuoteMax).optional(),
+  rating: zod
+    .number()
+    .min(1)
+    .max(adminUpdateTestimonialBodyRatingMax)
+    .optional(),
+  industry: zod.string().max(adminUpdateTestimonialBodyIndustryMax).optional(),
+  resultLabel: zod
+    .string()
+    .max(adminUpdateTestimonialBodyResultLabelMax)
+    .optional(),
+  published: zod.boolean().optional(),
+  displayOrder: zod.number().optional(),
+});
+
+export const adminUpdateTestimonialResponseRatingMax = 5;
+
+export const AdminUpdateTestimonialResponse = zod.object({
+  id: zod.number(),
+  clientName: zod.string(),
+  jobTitle: zod.string(),
+  companyName: zod.string(),
+  companyDomain: zod.string(),
+  companyLogoUrl: zod.string().nullish(),
+  profileImage: zod.string().nullish(),
+  quote: zod.string(),
+  rating: zod.number().min(1).max(adminUpdateTestimonialResponseRatingMax),
+  industry: zod.string(),
+  resultLabel: zod.string(),
+  published: zod.boolean(),
+  displayOrder: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a testimonial
+ */
+export const AdminDeleteTestimonialParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminDeleteTestimonialResponse = zod.object({
+  id: zod.number(),
+  deleted: zod.boolean(),
+});
+
+/**
+ * @summary Reorder testimonials
+ */
+
+export const AdminReorderTestimonialsBody = zod.object({
+  ids: zod.array(zod.number()).min(1),
+});
+
+export const adminReorderTestimonialsResponseTestimonialsItemRatingMax = 5;
+
+export const AdminReorderTestimonialsResponse = zod.object({
+  testimonials: zod.array(
+    zod.object({
+      id: zod.number(),
+      clientName: zod.string(),
+      jobTitle: zod.string(),
+      companyName: zod.string(),
+      companyDomain: zod.string(),
+      companyLogoUrl: zod.string().nullish(),
+      profileImage: zod.string().nullish(),
+      quote: zod.string(),
+      rating: zod
+        .number()
+        .min(1)
+        .max(adminReorderTestimonialsResponseTestimonialsItemRatingMax),
+      industry: zod.string(),
+      resultLabel: zod.string(),
+      published: zod.boolean(),
+      displayOrder: zod.number(),
+      createdAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
  * @summary Bulk action on blog posts (delete / publish / unpublish)
  */
 

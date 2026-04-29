@@ -268,6 +268,127 @@ export interface PublicBlogSitemap {
   entries: PublicBlogSitemapEntry[];
 }
 
+export interface AdminTestimonial {
+  id: number;
+  clientName: string;
+  jobTitle: string;
+  companyName: string;
+  companyDomain: string;
+  companyLogoUrl?: string | null;
+  profileImage?: string | null;
+  quote: string;
+  /**
+   * @minimum 1
+   * @maximum 5
+   */
+  rating: number;
+  industry: string;
+  resultLabel: string;
+  published: boolean;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminTestimonialList {
+  testimonials: AdminTestimonial[];
+}
+
+export interface AdminTestimonialInput {
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  clientName: string;
+  /** @maxLength 120 */
+  jobTitle?: string;
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  companyName: string;
+  /** @maxLength 200 */
+  companyDomain?: string;
+  /** @maxLength 1000 */
+  companyLogoUrl?: string | null;
+  profileImage?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 2000
+   */
+  quote: string;
+  /**
+   * @minimum 1
+   * @maximum 5
+   */
+  rating?: number;
+  /** @maxLength 60 */
+  industry?: string;
+  /** @maxLength 120 */
+  resultLabel?: string;
+  published?: boolean;
+  displayOrder?: number;
+}
+
+export interface AdminTestimonialUpdateInput {
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  clientName?: string;
+  /** @maxLength 120 */
+  jobTitle?: string;
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  companyName?: string;
+  /** @maxLength 200 */
+  companyDomain?: string;
+  /** @maxLength 1000 */
+  companyLogoUrl?: string | null;
+  profileImage?: string | null;
+  /**
+   * @minLength 1
+   * @maxLength 2000
+   */
+  quote?: string;
+  /**
+   * @minimum 1
+   * @maximum 5
+   */
+  rating?: number;
+  /** @maxLength 60 */
+  industry?: string;
+  /** @maxLength 120 */
+  resultLabel?: string;
+  published?: boolean;
+  displayOrder?: number;
+}
+
+export interface AdminTestimonialReorderInput {
+  /** @minItems 1 */
+  ids: number[];
+}
+
+export interface PublicTestimonial {
+  id: number;
+  clientName: string;
+  jobTitle: string;
+  companyName: string;
+  companyDomain: string;
+  companyLogoUrl?: string | null;
+  profileImage?: string | null;
+  quote: string;
+  rating: number;
+  industry: string;
+  resultLabel: string;
+}
+
+export interface PublicTestimonialList {
+  testimonials: PublicTestimonial[];
+}
+
 export interface ErrorResponse {
   error: string;
   details?: string[];

@@ -53,6 +53,11 @@ Password-protected internal tool for managing leads, with a dark sidebar layout.
 - **Blogs**: `/admin/blogs` (list with stats, search, status/category filters, sort, pagination, bulk publish/unpublish/delete), `/admin/blogs/new` and `/admin/blogs/edit/:id` (TipTap editor: H1–H4, bold/italic/underline, lists, blockquote, code, link, image upload as base64; auto-slug, featured image, excerpt, SEO collapsible with character counters, category select with inline create, tag chips, author, reading-time auto-calc, save draft / publish / schedule, autosave every 60s).
 - **Categories**: `/admin/blogs/categories` — inline add (name + description), edit, delete with post-count warning.
 - **Blog endpoints**: `GET/POST /api/admin/blog-posts`, `GET/PATCH/DELETE /api/admin/blog-posts/:id`, `POST /api/admin/blog-posts/bulk` (delete/publish/unpublish), `GET/POST /api/admin/blog-categories`, `PATCH/DELETE /api/admin/blog-categories/:id`. Server slugifies, dedupes slugs, computes reading time, and manages `publishedAt`/`scheduledAt` based on status. Tables `blog_posts` + `blog_categories` (FK with `set null` on category delete) live in `lib/db/src/schema/`.
+- **Testimonials**: `/admin/testimonials` — list with stats (total/published/hidden/avg rating), search, status filter, create/edit dialog (client name, job title, company, domain → auto-fetched logo, optional logo override, profile photo upload as base64, quote, 1–5 star rating, industry, result label, published switch), reorder via up/down arrows, inline publish toggle, delete with confirm. Logos resolve via `https://logo.clearbit.com/{domain}` with company-initial badge fallback on error. `testimonials` table in `lib/db/src/schema/`. Endpoints: `GET /api/testimonials` (public, only published), `GET/POST /api/admin/testimonials`, `GET/PATCH/DELETE /api/admin/testimonials/:id`, `POST /api/admin/testimonials/reorder`.
+
+### Public testimonials surface
+- **Trusted-By bar** (`components/sections/trusted-by-bar.tsx`): auto-scrolling marquee of unique company logos, greyscale → color on hover, pauses on hover, respects `prefers-reduced-motion`.
+- **Testimonials section** (`components/sections/testimonials.tsx`): 3-up grid (≤3 items) or auto-advancing carousel with prev/next + dot pagination (>3 items), native swipe on mobile, skeleton loader and graceful empty state.
 
 ## Blaze Studio (artifact)
 

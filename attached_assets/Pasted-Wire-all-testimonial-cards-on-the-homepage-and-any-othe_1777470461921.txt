@@ -1,0 +1,78 @@
+Wire all testimonial cards on the homepage and any other page they appear to dynamically display real client logos alongside each quote. The goal is to make every testimonial feel credible, verified, and enterprise-grade — not generic. Every card must show who said it, where they work, and that company's logo.
+Testimonial Card Structure (each card must include):
+
+Client profile avatar (African professional, consistent with homepage image update)
+Client full name
+Client job title (e.g. CEO, Marketing Director, Founder)
+Client company name
+Client company logo — displayed cleanly beside or below the company name
+The quote/testimonial text
+Star rating (5-star display, static or dynamic)
+Optional: industry badge (e.g. "FinTech", "Healthcare", "E-commerce") as a small tag
+
+Logo Display Standards:
+
+Logos should be sourced from the real company's official website or a logo API
+Use Clearbit Logo API (https://logo.clearbit.com/{domain}) to automatically fetch logos by company domain — fast, free, and always up to date
+Fallback: if no logo is found via Clearbit, display a clean company initial avatar (first letter of company name, styled consistently)
+All logos must render at consistent size — recommended max height of 28px to 32px, auto width
+Logos must be displayed in greyscale by default, transitioning to full color on hover — this is the industry standard for social proof sections
+White logos on dark backgrounds and dark logos on light backgrounds must be handled — use CSS filter or background pill to ensure visibility regardless of logo color
+No stretched, pixelated, or misaligned logos under any circumstance
+
+Admin Panel Integration (/admin/testimonials):
+
+Add a Testimonials Management section to the existing admin dashboard
+Sidebar nav item: Testimonials, consistent with current admin UI
+Admin can: Add, Edit, Delete testimonials
+Fields per testimonial:
+
+Client name
+Job title
+Company name
+Company website/domain (used to auto-fetch logo via Clearbit)
+Profile photo upload
+Testimonial quote text
+Star rating selector (1–5 stars)
+Industry/sector tag
+Status toggle (Published / Hidden)
+Display order (drag to reorder)
+
+
+Logo preview shown immediately when admin types the company domain
+Toast notifications for all actions
+Changes reflect on the live site instantly upon publishing
+
+Homepage Testimonials Section:
+
+Pull all testimonials where status is Published from the database
+Render in the existing testimonials section layout
+If more than 6 testimonials exist — display as an auto-scrolling carousel with pause on hover
+On mobile — swipeable card slider
+Show a maximum of 3 cards visible at once on desktop
+Smooth fade or slide transition between cards
+Navigation dots or arrows for manual control
+Loading skeleton cards while testimonials are fetching
+Empty state handled gracefully if no testimonials are published yet
+
+Trust Signals to add alongside testimonials:
+
+Above or below the testimonials section add a "Trusted By" logo bar — a horizontally scrolling strip of client company logos only (no names, no quotes)
+Logos in the bar auto-scroll left continuously, pause on hover
+Logos pulled from the same client database — no duplication of effort
+Greyscale logos that go full color on hover
+Label above the bar: "Trusted by businesses across Nigeria and beyond" or similar
+
+SEO & Performance:
+
+All testimonial content server-rendered so Google can index client names and quotes as social proof signals
+Logo images lazy loaded
+Clearbit logo fetch cached to avoid repeated API calls on every page load
+Alt tags on every logo image for accessibility
+
+Do not:
+
+Use fake, placeholder, or lorem ipsum testimonials anywhere
+Display logos that fail to load without a proper fallback
+Allow testimonials section to break layout on any screen size
+Hardcode any testimonial — everything must be admin-manageable

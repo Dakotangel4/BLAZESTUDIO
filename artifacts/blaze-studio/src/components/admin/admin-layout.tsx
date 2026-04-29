@@ -7,6 +7,7 @@ import {
   Flame,
   FileText,
   FolderTree,
+  Quote,
 } from "lucide-react";
 import { useAdminLogout } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import { toast } from "sonner";
 
 const NAV = [
   { href: "/admin/leads", label: "Leads", icon: Inbox },
+  { href: "/admin/testimonials", label: "Testimonials", icon: Quote },
   { href: "/admin/blogs", label: "Blogs", icon: FileText },
   { href: "/admin/blogs/categories", label: "Categories", icon: FolderTree },
 ];
