@@ -992,8 +992,100 @@ export const categoryColor: Record<Category, string> = {
   "Case Study": "bg-rose-500/10 text-rose-700 border-rose-500/20",
 };
 
+export const categorySlug: Record<Category, string> = {
+  "AI Strategy": "ai-strategy",
+  "AI Chatbots": "ai-chatbots",
+  Personalization: "personalization",
+  "AI SEO": "ai-seo",
+  "Lead Generation": "lead-generation",
+  "AI Search": "ai-search",
+  "Case Study": "case-study",
+};
+
+export const categoryFromSlug: Record<string, Category> = Object.fromEntries(
+  Object.entries(categorySlug).map(([k, v]) => [v, k as Category]),
+) as Record<string, Category>;
+
+export interface CategoryMeta {
+  tagline: string;
+  description: string;
+  gradient: string;
+  pattern: string;
+  number: string;
+}
+
+export const categoryMeta: Record<Category, CategoryMeta> = {
+  "AI Strategy": {
+    tagline: "Frameworks & roadmaps",
+    description:
+      "How to plan, prioritise and ship AI inside an existing business — without burning budget on the wrong integrations or chasing trends.",
+    gradient: "from-pink-500 via-rose-600 to-red-600",
+    pattern:
+      "radial-gradient(circle at 60% 40%, rgba(255,255,255,0.22) 0, transparent 55%)",
+    number: "01",
+  },
+  "AI Chatbots": {
+    tagline: "Conversational AI",
+    description:
+      "When chatbots help, when they hurt, and how to build ones your customers actually want to use — not the kind they'll ragequit.",
+    gradient: "from-emerald-500 via-teal-600 to-cyan-700",
+    pattern:
+      "radial-gradient(circle at 70% 30%, rgba(255,255,255,0.22) 0, transparent 50%)",
+    number: "02",
+  },
+  Personalization: {
+    tagline: "Tailored experiences",
+    description:
+      "Behaviour-driven content, recommendations and offers that lift average order value — without crossing into creepy.",
+    gradient: "from-violet-500 via-purple-600 to-indigo-700",
+    pattern:
+      "radial-gradient(circle at 30% 70%, rgba(255,255,255,0.22) 0, transparent 50%)",
+    number: "03",
+  },
+  "AI SEO": {
+    tagline: "Content & search visibility",
+    description:
+      "Ranking in the age of AI Overviews, ChatGPT search and Google's helpful-content updates — without writing slop.",
+    gradient: "from-amber-500 via-orange-600 to-red-600",
+    pattern:
+      "radial-gradient(circle at 50% 30%, rgba(255,255,255,0.22) 0, transparent 55%)",
+    number: "04",
+  },
+  "Lead Generation": {
+    tagline: "Pipeline & prediction",
+    description:
+      "Score, route and follow up on leads with AI so the best ones get called first — and nothing falls through the cracks again.",
+    gradient: "from-sky-500 via-blue-600 to-indigo-700",
+    pattern:
+      "radial-gradient(circle at 80% 60%, rgba(255,255,255,0.22) 0, transparent 50%)",
+    number: "05",
+  },
+  "AI Search": {
+    tagline: "On-site discovery",
+    description:
+      "Vector search, semantic relevance, and turning your site's search bar into a real conversion engine.",
+    gradient: "from-lime-500 via-emerald-600 to-teal-700",
+    pattern:
+      "radial-gradient(circle at 40% 70%, rgba(255,255,255,0.22) 0, transparent 55%)",
+    number: "06",
+  },
+  "Case Study": {
+    tagline: "Real numbers, real shops",
+    description:
+      "Before/after teardowns of the websites we ship — what we changed, what it moved, and what it cost.",
+    gradient: "from-rose-500 via-fuchsia-600 to-purple-700",
+    pattern:
+      "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22) 0, transparent 50%)",
+    number: "07",
+  },
+};
+
 export function getPostBySlug(slug: string): Post | undefined {
   return POSTS.find((p) => p.slug === slug);
+}
+
+export function getPostsByCategory(category: Category): Post[] {
+  return POSTS.filter((p) => p.category === category);
 }
 
 export function getRelatedPosts(slug: string, limit = 3): Post[] {

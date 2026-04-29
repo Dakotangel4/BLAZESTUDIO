@@ -16,7 +16,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import SiteLayout from "@/components/layout/site-layout";
-import { POSTS, CATEGORIES, categoryColor, type Category } from "@/lib/posts";
+import {
+  POSTS,
+  CATEGORIES,
+  categoryColor,
+  categoryMeta,
+  categorySlug,
+  getPostsByCategory,
+  type Category,
+} from "@/lib/posts";
 
 type Filter = "All" | Category;
 
@@ -204,6 +212,66 @@ export default function BlogPage() {
                 </div>
               </motion.div>
             </Link>
+          </div>
+        </section>
+
+        {/* Browse by topic */}
+        <section className="pb-14 sm:pb-16">
+          <div className="container mx-auto px-4 sm:px-6">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6 sm:mb-8">
+              <div>
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-3">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Browse by topic
+                </span>
+                <h2 className="text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold tracking-[-0.02em] text-foreground leading-tight">
+                  Pick your lane
+                </h2>
+              </div>
+              <p className="text-sm text-muted-foreground max-w-sm">
+                Each topic has its own dedicated page with every article we've
+                published in that area.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+              {(Object.keys(categoryMeta) as Category[]).map((c) => {
+                const m = categoryMeta[c];
+                const slug = categorySlug[c];
+                const count = getPostsByCategory(c).length;
+                return (
+                  <Link
+                    key={c}
+                    href={`/blog/category/${slug}`}
+                    className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${m.gradient} text-white p-4 sm:p-5 min-h-[140px] flex flex-col justify-between hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+                  >
+                    <div
+                      className="absolute inset-0"
+                      style={{ backgroundImage: m.pattern }}
+                      aria-hidden
+                    />
+                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-15 mix-blend-overlay" />
+                    <div className="absolute -right-1 -bottom-2 text-[5rem] font-black opacity-20 leading-[0.85] tabular-nums tracking-[-0.04em] pointer-events-none">
+                      {m.number}
+                    </div>
+                    <div className="relative">
+                      <div className="text-[10px] font-bold tracking-[0.18em] uppercase opacity-85 mb-1 line-clamp-1">
+                        {m.tagline}
+                      </div>
+                      <div className="text-base sm:text-[17px] font-extrabold tracking-tight leading-tight">
+                        {c}
+                      </div>
+                    </div>
+                    <div className="relative flex items-center justify-between text-[11px] sm:text-xs font-semibold">
+                      <span className="opacity-85 tabular-nums">
+                        {count} article{count === 1 ? "" : "s"}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </section>
 
