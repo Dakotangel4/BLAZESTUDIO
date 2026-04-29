@@ -1,9 +1,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { useNav } from "@/hooks/use-nav";
-import heroFallback from "@/assets/hero-team.png";
 
 type Particle = {
   x: number;
@@ -15,7 +13,20 @@ type Particle = {
   maxLife: number;
   flicker: number;
   isSpark: boolean;
+  hasTrail: boolean;
+  trail: { x: number; y: number; a: number }[];
 };
+
+type CodeChar = {
+  x: number;
+  y: number;
+  vy: number;
+  text: string;
+  alpha: number;
+  size: number;
+};
+
+const CODE_GLYPHS = ["0", "1", "0", "1", "</>", "{}", "()", "fn", "=>", "[ ]"];
 
 export default function Hero() {
   const navigate = useNav();
@@ -25,8 +36,9 @@ export default function Hero() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
 
-  // Canvas ember particle system — paused on tab hidden, resize debounced,
-  // mobile particle count reduced, mouse-direction drift.
+  // Dual-layer canvas:
+  //   Layer A — perspective tech grid + drifting code characters (atmosphere)
+  //   Layer B — ember particles, sparks with trails, breathing heat glow
   useEffect(() => {
     if (reduceMotion) return;
     const canvas = canvasRef.current;
@@ -38,12 +50,17 @@ export default function Hero() {
     let height = 0;
     let dpr = 1;
     let particles: Particle[] = [];
+    let codeChars: CodeChar[] = [];
+    let gridScroll = 0;
+    let glowPhase = 0;
     let rafId = 0;
     let running = true;
     let resizeTimer: number | undefined;
+    let lastTs = performance.now();
 
     const isMobile = () => window.innerWidth < 768;
-    const targetCount = () => (isMobile() ? 60 : 130);
+    const targetCount = () => (isMobile() ? 60 : 120);
+    const codeCount = () => (isMobile() ? 14 : 28);
 
     const setSize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -55,39 +72,141 @@ export default function Hero() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    const spawn = (x?: number, y?: number, isSpark = false): Particle => {
+    const spawnParticle = (x?: number, y?: number, isSpark = false): Particle => {
       const sx = x ?? Math.random() * width;
       const sy = y ?? height + 8;
+      const hasTrail = !isSpark && Math.random() < 1 / 8;
       return {
         x: sx,
         y: sy,
         vx: (Math.random() - 0.5) * (isSpark ? 0.7 : 0.35),
-        vy: -Math.random() * (isSpark ? 2.2 : 1.0) - 0.4,
-        size: isSpark ? Math.random() * 1.4 + 0.6 : Math.random() * 2.2 + 0.5,
+        vy: -Math.random() * (isSpark ? 2.4 : 1.0) - 0.4,
+        size: isSpark ? Math.random() * 1.4 + 0.6 : Math.random() * 2.6 + 0.6,
         life: 0,
         maxLife: isSpark ? 50 + Math.random() * 40 : 200 + Math.random() * 240,
         flicker: Math.random() * Math.PI * 2,
         isSpark,
+        hasTrail,
+        trail: [],
       };
     };
+
+    const spawnCodeChar = (initial = false): CodeChar => ({
+      x: Math.random() * width,
+      y: initial ? Math.random() * height : height + Math.random() * 40,
+      vy: -(0.18 + Math.random() * 0.35),
+      text: CODE_GLYPHS[Math.floor(Math.random() * CODE_GLYPHS.length)],
+      alpha: 0.06 + Math.random() * 0.06,
+      size: 11 + Math.random() * 5,
+    });
 
     const init = () => {
       setSize();
       particles = Array.from({ length: targetCount() }, () => {
-        const p = spawn();
+        const p = spawnParticle();
         p.y = Math.random() * height;
         p.life = Math.random() * p.maxLife * 0.5;
         return p;
       });
+      codeChars = Array.from({ length: codeCount() }, () => spawnCodeChar(true));
     };
 
-    const loop = () => {
-      if (!running) return;
-      ctx.clearRect(0, 0, width, height);
+    // -------- Layer A: perspective tech grid --------
+    const drawGrid = () => {
+      const horizonY = height * 0.46; // horizon center vertical position
+      const vanishX = width / 2;
+      const baseY = height + 40;
+      const lineColor = "rgba(255, 140, 0, 0.08)";
+      const strongColor = "rgba(255, 140, 0, 0.12)";
+
+      ctx.save();
+      ctx.lineWidth = 1;
+
+      // Horizontal lines receding to horizon (z-axis scroll)
+      const rows = 18;
+      for (let i = 0; i < rows; i++) {
+        // t in [0,1) with continuous scroll
+        const t = ((i + gridScroll) % rows) / rows;
+        // perspective easing: lines bunch toward horizon
+        const eased = Math.pow(t, 2.2);
+        const y = horizonY + (baseY - horizonY) * eased;
+        const fade = Math.min(1, eased * 1.6);
+        ctx.strokeStyle = i % 4 === 0 ? strongColor : lineColor;
+        ctx.globalAlpha = fade;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      // Radial lines from vanishing point to bottom edge
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = lineColor;
+      const cols = 18;
+      for (let i = -cols; i <= cols; i++) {
+        const ratio = i / cols;
+        const xBottom = vanishX + ratio * width * 1.4;
+        ctx.beginPath();
+        ctx.moveTo(vanishX, horizonY);
+        ctx.lineTo(xBottom, baseY);
+        ctx.stroke();
+      }
+
+      // Soft horizon glow band
+      const horizonGrad = ctx.createLinearGradient(0, horizonY - 24, 0, horizonY + 24);
+      horizonGrad.addColorStop(0, "rgba(255, 120, 40, 0)");
+      horizonGrad.addColorStop(0.5, "rgba(255, 120, 40, 0.06)");
+      horizonGrad.addColorStop(1, "rgba(255, 120, 40, 0)");
+      ctx.fillStyle = horizonGrad;
+      ctx.fillRect(0, horizonY - 24, width, 48);
+
+      ctx.restore();
+    };
+
+    // -------- Layer A: drifting code characters --------
+    const drawCodeChars = () => {
+      ctx.save();
+      ctx.font = "500 12px 'JetBrains Mono', 'Fira Code', ui-monospace, monospace";
+      ctx.textBaseline = "middle";
+      for (let i = codeChars.length - 1; i >= 0; i--) {
+        const c = codeChars[i];
+        c.y += c.vy;
+        if (c.y < -20) {
+          codeChars[i] = spawnCodeChar();
+          continue;
+        }
+        ctx.fillStyle = `rgba(255, 160, 50, ${c.alpha})`;
+        ctx.font = `500 ${c.size}px 'JetBrains Mono', 'Fira Code', ui-monospace, monospace`;
+        ctx.fillText(c.text, c.x, c.y);
+      }
+      ctx.restore();
+    };
+
+    // -------- Layer B: breathing radial heat glow --------
+    const drawHeatGlow = () => {
+      // 5s breathing cycle: phase advances by (2π / 5s) each second
+      const breath = 0.55 + Math.sin(glowPhase) * 0.25; // 0.30 .. 0.80
+      const cx = width * 0.5;
+      const cy = height + height * 0.05;
+      const r = Math.max(width, height) * 0.55;
+      const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      grd.addColorStop(0, `rgba(255, 100, 30, ${0.28 * breath})`);
+      grd.addColorStop(0.4, `rgba(255, 70, 20, ${0.12 * breath})`);
+      grd.addColorStop(1, "rgba(255, 60, 15, 0)");
+      ctx.save();
+      ctx.globalCompositeOperation = "lighter";
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    };
+
+    // -------- Layer B: ember particles --------
+    const drawParticles = () => {
+      ctx.save();
       ctx.globalCompositeOperation = "lighter";
 
       const target = targetCount();
-      while (particles.length < target) particles.push(spawn());
+      while (particles.length < target) particles.push(spawnParticle());
 
       const mx = mouseRef.current.x;
 
@@ -104,7 +223,26 @@ export default function Hero() {
           continue;
         }
 
-        // Flicker: randomized opacity pulse
+        // Trail recording (1-in-8 embers)
+        if (p.hasTrail) {
+          p.trail.push({ x: p.x, y: p.y, a: 1 - lifeRatio });
+          if (p.trail.length > 8) p.trail.shift();
+          // draw trail as fading line
+          if (p.trail.length > 1) {
+            for (let t = 1; t < p.trail.length; t++) {
+              const a = p.trail[t - 1];
+              const b = p.trail[t];
+              const ta = b.a * (t / p.trail.length) * 0.5;
+              ctx.strokeStyle = `rgba(255, 165, 0, ${ta})`;
+              ctx.lineWidth = p.size * 0.7;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+
         const flickerPulse = 0.55 + Math.sin(p.flicker) * 0.3;
         const alpha = (1 - lifeRatio) * flickerPulse;
         const size = p.size * (1 + Math.sin(p.flicker * 0.7) * 0.2);
@@ -112,13 +250,15 @@ export default function Hero() {
 
         const grd = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, radius);
         if (p.isSpark) {
-          grd.addColorStop(0, `rgba(255, 250, 235, ${alpha})`);
-          grd.addColorStop(0.4, `rgba(255, 200, 110, ${alpha * 0.6})`);
-          grd.addColorStop(1, "rgba(255, 90, 20, 0)");
+          // electric white spark core fading to amber → deep orange
+          grd.addColorStop(0, `rgba(255, 255, 255, ${alpha})`);
+          grd.addColorStop(0.35, `rgba(255, 165, 0, ${alpha * 0.7})`);
+          grd.addColorStop(1, "rgba(255, 69, 0, 0)");
         } else {
+          // amber → deep orange ember
           grd.addColorStop(0, `rgba(255, 200, 120, ${alpha})`);
-          grd.addColorStop(0.5, `rgba(255, 120, 40, ${alpha * 0.5})`);
-          grd.addColorStop(1, "rgba(180, 40, 10, 0)");
+          grd.addColorStop(0.5, `rgba(255, 120, 40, ${alpha * 0.55})`);
+          grd.addColorStop(1, "rgba(255, 69, 0, 0)");
         }
         ctx.fillStyle = grd;
         ctx.beginPath();
@@ -126,14 +266,31 @@ export default function Hero() {
         ctx.fill();
       }
 
-      // Rare brighter white sparks with short lifespan
+      // Rare bright white sparks
       if (Math.random() < 0.025) {
         particles.push(
-          spawn(Math.random() * width, height - Math.random() * 80, true),
+          spawnParticle(Math.random() * width, height - Math.random() * 80, true),
         );
       }
 
-      ctx.globalCompositeOperation = "source-over";
+      ctx.restore();
+    };
+
+    const loop = (ts: number) => {
+      if (!running) return;
+      const dt = Math.min(64, ts - lastTs);
+      lastTs = ts;
+
+      // advance scrolls
+      gridScroll += dt / 1000 * 0.18; // slow forward scroll
+      glowPhase += dt / 1000 * (Math.PI * 2 / 5); // 5s breathing
+
+      ctx.clearRect(0, 0, width, height);
+      drawGrid();
+      drawCodeChars();
+      drawHeatGlow();
+      drawParticles();
+
       rafId = requestAnimationFrame(loop);
     };
 
@@ -148,12 +305,13 @@ export default function Hero() {
         cancelAnimationFrame(rafId);
       } else if (!running) {
         running = true;
-        loop();
+        lastTs = performance.now();
+        rafId = requestAnimationFrame(loop);
       }
     };
 
     init();
-    loop();
+    rafId = requestAnimationFrame(loop);
     window.addEventListener("resize", onResize);
     document.addEventListener("visibilitychange", onVisibility);
 
@@ -202,44 +360,43 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="hero-section relative isolate min-h-[92vh] flex items-center overflow-hidden"
+      className="hero-section relative isolate min-h-screen flex items-center overflow-hidden"
     >
-      {/* [1] Video / fire background layer (CSS-driven for reliability;
-          swap the .hero-fire-bg div for a <video> tag if an embers clip is added) */}
-      {!reduceMotion ? (
-        <div aria-hidden className="absolute inset-0 z-0 hero-fire-bg" />
-      ) : (
-        <img
-          src={heroFallback}
-          alt=""
+      {/* [Fallback] CSS fire background — visible while video loads,
+          if autoplay is blocked, or for reduced-motion users */}
+      <div aria-hidden className="absolute inset-0 z-0 hero-fire-bg" />
+
+      {/* [1] Video — deepest layer above CSS fallback. With no <source>
+          attached yet, it renders transparent and the fire-bg shows through.
+          When a clip is added (drop a <source src="..."/>) it will play. */}
+      {!reduceMotion && (
+        <video
           aria-hidden
-          className="absolute inset-0 z-0 w-full h-full object-cover opacity-30"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          className="absolute inset-0 z-[1] w-full h-full object-cover pointer-events-none"
         />
       )}
 
-      {/* [2] Canvas ember particle animation */}
+      {/* [2] Canvas — tech grid + code chars + embers + heat glow */}
       {!reduceMotion && (
         <canvas
           ref={canvasRef}
           aria-hidden
-          className="absolute inset-0 z-[1] w-full h-full pointer-events-none"
+          className="absolute inset-0 z-[2] w-full h-full pointer-events-none"
         />
       )}
 
-      {/* Technical credibility layers — very low opacity */}
+      {/* [3] Dark veil rgba(0,0,0,0.45) per spec */}
       <div
         aria-hidden
-        className="absolute inset-0 z-[2] pointer-events-none hero-grid-overlay"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 z-[2] pointer-events-none hero-scanlines"
+        className="absolute inset-0 z-[3] bg-black/45 pointer-events-none"
       />
 
-      {/* [3] Dark overlay rgba(0,0,0,0.45) */}
-      <div aria-hidden className="absolute inset-0 z-[3] bg-black/45 pointer-events-none" />
-
-      {/* Vignette to focus the eye on the content */}
+      {/* Vignette to focus the eye on content */}
       <div
         aria-hidden
         className="absolute inset-0 z-[3] pointer-events-none bg-[radial-gradient(ellipse_at_center,_transparent_45%,_rgba(0,0,0,0.55)_100%)]"
@@ -251,72 +408,85 @@ export default function Hero() {
           ref={contentRef}
           className="max-w-3xl mx-auto text-center will-change-transform"
         >
+          {/* Eyebrow — delay 0.2s */}
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 backdrop-blur-sm border border-white/15 text-white/85 font-semibold text-[11px] sm:text-xs tracking-[0.2em] mb-6"
+            transition={{ delay: 0.2, duration: 0.7, ease: "easeOut" }}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 backdrop-blur-sm border border-white/15 font-semibold text-[11px] sm:text-xs uppercase tracking-[0.22em] mb-6"
+            style={{ color: "#FFA500" }}
           >
             <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary" />
             WEB • APP • DIGITAL MARKETING
           </motion.div>
 
+          {/* H1 — delay 0.4s, Bebas Neue 80px desktop / 44px mobile, letter-spacing 2px */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, duration: 0.7 }}
-            className="text-[clamp(2.4rem,7vw,5rem)] font-extrabold tracking-[-0.02em] leading-[1.04] text-white mb-6 text-balance"
+            transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
+            className="font-display text-white mb-6 text-balance leading-[0.95] uppercase"
+            style={{
+              fontSize: "clamp(2.75rem, 8vw, 5rem)",
+              letterSpacing: "0.08em",
+            }}
           >
             We Build Digital Systems That{" "}
-            <span className="relative inline-block text-primary">
+            <span className="relative inline-block" style={{ color: "#FFA500" }}>
               Ignite Growth
               <span
                 aria-hidden
-                className="absolute -inset-x-2 -bottom-1 h-[3px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-70"
+                className="absolute -inset-x-2 -bottom-1 h-[3px] bg-gradient-to-r from-transparent via-[#FFA500] to-transparent opacity-80"
               />
             </span>
           </motion.h1>
 
+          {/* Subheadline — delay 0.6s */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-base sm:text-lg md:text-xl text-white/75 leading-relaxed max-w-2xl mx-auto mb-9"
+            transition={{ delay: 0.6, duration: 0.7, ease: "easeOut" }}
+            className="text-base sm:text-lg leading-relaxed max-w-[560px] mx-auto mb-9"
+            style={{ color: "#CCCCCC", fontFamily: "'DM Sans', 'Inter', sans-serif" }}
           >
             Blaze Studio designs and engineers high-performance websites, apps,
             and marketing systems built to capture attention, scale fast, and
             dominate your market.
           </motion.p>
 
+          {/* Buttons — delay 0.8s */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45, duration: 0.6 }}
+            transition={{ delay: 0.8, duration: 0.7, ease: "easeOut" }}
             className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
           >
-            <Button
-              size="lg"
-              className="cta-glow h-12 sm:h-14 px-7 sm:px-9 text-sm sm:text-base font-bold bg-primary text-primary-foreground transition-transform active:scale-[0.98] cursor-pointer group"
+            <button
+              type="button"
               onClick={() => navigate("/contact", "contact-form")}
+              className="hero-cta-blaze inline-flex items-center justify-center gap-2 font-bold text-sm uppercase tracking-wider cursor-pointer"
+              style={{ padding: "16px 36px" }}
             >
               Start a Project
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-12 sm:h-14 px-7 sm:px-9 text-sm sm:text-base font-bold bg-white/5 hover:bg-white/10 text-white border-white/25 hover:border-white/50 backdrop-blur-sm transition-colors active:scale-[0.98] cursor-pointer"
+              <ArrowRight className="w-4 h-4" />
+            </button>
+
+            <button
+              type="button"
               onClick={() => navigate("/portfolio")}
+              className="hero-cta-secondary inline-flex items-center justify-center gap-2 font-bold text-sm uppercase tracking-wider cursor-pointer"
+              style={{ padding: "16px 36px" }}
             >
               View Case Studies →
-            </Button>
+            </button>
           </motion.div>
 
+          {/* Trust line */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.6 }}
-            transition={{ delay: 0.7, duration: 0.8 }}
-            className="mt-7 text-xs sm:text-sm tracking-wide text-white/60"
+            transition={{ delay: 1.0, duration: 0.8 }}
+            className="mt-7 text-xs sm:text-sm tracking-wide text-white"
           >
             Trusted by fast-growing brands and ambitious founders
           </motion.p>

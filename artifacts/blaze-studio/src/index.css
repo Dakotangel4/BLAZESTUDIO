@@ -189,41 +189,42 @@
   }
 }
 
-/* Subtle UI-grid overlay — engineered/technical credibility */
-.hero-grid-overlay {
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
-  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
-  opacity: 0.5;
+/* Headline font — bold, tall, impactful (Bebas Neue) */
+.font-display {
+  font-family: 'Bebas Neue', 'Anton', 'Inter', system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
-/* Ultra-subtle horizontal scan lines */
-.hero-scanlines {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.04) 0px,
-    rgba(255, 255, 255, 0.04) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  opacity: 0.35;
-  mix-blend-mode: overlay;
+/* Primary Blaze CTA — sharp gradient button per brand spec */
+.hero-cta-blaze {
+  background-image: linear-gradient(135deg, #FF4500 0%, #FFA500 100%);
+  color: #fff;
+  border-radius: 4px;
+  box-shadow:
+    0 8px 24px -8px rgba(255, 80, 20, 0.55),
+    0 0 0 0 rgba(255, 165, 0, 0);
+  transition: box-shadow 220ms ease, transform 220ms ease, filter 220ms ease;
+}
+.hero-cta-blaze:hover {
+  filter: brightness(1.08);
+  transform: scale(1.03);
+  box-shadow:
+    0 14px 32px -6px rgba(255, 80, 20, 0.7),
+    0 0 28px 2px rgba(255, 165, 0, 0.45);
 }
 
-/* Primary CTA glow on hover */
-.cta-glow {
-  box-shadow:
-    0 8px 24px -8px hsl(var(--primary) / 0.55),
-    0 0 0 0 hsl(var(--primary) / 0);
-  transition: box-shadow 220ms ease, transform 180ms ease, background-color 180ms ease;
+/* Secondary "View Case Studies" link button */
+.hero-cta-secondary {
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  transition: border-color 200ms ease, background 200ms ease, transform 200ms ease;
 }
-.cta-glow:hover {
-  box-shadow:
-    0 12px 32px -6px hsl(var(--primary) / 0.7),
-    0 0 24px 2px hsl(var(--primary) / 0.45);
+.hero-cta-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* Accessibility — kill expensive animations for reduced-motion users */
