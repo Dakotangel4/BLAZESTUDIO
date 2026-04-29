@@ -1,7 +1,19 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, MessageCircle, User, Phone, Mail, Globe, ChevronDown, CheckCircle } from "lucide-react";
+import {
+  Send,
+  MessageCircle,
+  User,
+  Phone,
+  Mail,
+  Globe,
+  ChevronDown,
+  CheckCircle,
+  Loader2,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCreateContactSubmission } from "@workspace/api-client-react";
 
 const WHATSAPP_NUMBER = "2349130986279";
 
@@ -43,11 +55,15 @@ const initialForm: FormState = {
 
 function validate(form: FormState): FormErrors {
   const errors: FormErrors = {};
-  if (!form.name.trim() || form.name.trim().length < 2) errors.name = "Please enter your full name";
-  if (!form.phone.trim() || form.phone.trim().length < 7) errors.phone = "Please enter a valid phone number";
-  if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = "Please enter a valid email address";
+  if (!form.name.trim() || form.name.trim().length < 2)
+    errors.name = "Please enter your full name";
+  if (!form.phone.trim() || form.phone.trim().length < 7)
+    errors.phone = "Please enter a valid phone number";
+  if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+    errors.email = "Please enter a valid email address";
   if (!form.service) errors.service = "Please select a service";
-  if (!form.message.trim() || form.message.trim().length < 10) errors.message = "Tell us a little more (at least 10 characters)";
+  if (!form.message.trim() || form.message.trim().length < 10)
+    errors.message = "Tell us a little more (at least 10 characters)";
   return errors;
 }
 
@@ -70,31 +86,63 @@ export default function ContactForm() {
   const [form, setForm] = useState<FormState>(initialForm);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const set = (field: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    if (errors[field as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
-  };
+  const submission = useCreateContactSubmission();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const set =
+    (field: keyof FormState) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >,
+    ) => {
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      if (errors[field as keyof FormErrors]) {
+        setErrors((prev) => ({ ...prev, [field]: undefined }));
+      }
+      if (serverError) setServerError(null);
+    };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate(form);
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsAppText(form))}`;
-    window.open(url, "_blank");
-    setSubmitted(true);
+    setServerError(null);
+
+    try {
+      await submission.mutateAsync({
+        data: {
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          email: form.email.trim(),
+          website: form.website.trim() || undefined,
+          service: form.service,
+          message: form.message.trim(),
+          source: "contact_form",
+        },
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setServerError(
+        "We couldn't save your request. Please try again, or send us your details on WhatsApp.",
+      );
+    }
   };
 
   const inputBase =
-    "w-full bg-white border border-border rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all";
+    "w-full bg-white border border-border rounded-xl px-4 py-3.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all disabled:opacity-60 disabled:cursor-not-allowed";
+
+  const isSubmitting = submission.isPending;
 
   return (
-    <section id="contact-form" className="py-16 sm:py-20 lg:py-28 bg-secondary/40">
+    <section
+      id="contact-form"
+      className="py-16 sm:py-20 lg:py-28 bg-secondary/40"
+    >
       <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -113,7 +161,8 @@ export default function ContactForm() {
             <span className="text-primary"> Is Missing.</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Fill in your details and we'll reach out via WhatsApp with a personalised audit — no pressure, no fluff.
+            Fill in your details and we'll reach out with a personalised
+            audit — no pressure, no fluff.
           </p>
         </motion.div>
 
@@ -129,9 +178,15 @@ export default function ContactForm() {
               <div className="flex justify-center mb-6">
                 <CheckCircle className="w-16 h-16 text-primary" />
               </div>
-              <h3 className="text-2xl font-extrabold text-foreground mb-3">You're all set!</h3>
+              <h3 className="text-2xl font-extrabold text-foreground mb-3">
+                Request received — thank you!
+              </h3>
+              <p className="text-muted-foreground mb-2">
+                Your audit request is in. A member of our team will reach out
+                within one business day.
+              </p>
               <p className="text-muted-foreground mb-8">
-                WhatsApp is opening with your details pre-filled. If it didn't open automatically, tap below.
+                Want a faster reply? Send the same details on WhatsApp.
               </p>
               <Button
                 size="lg"
@@ -139,12 +194,12 @@ export default function ContactForm() {
                 onClick={() =>
                   window.open(
                     `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildWhatsAppText(form))}`,
-                    "_blank"
+                    "_blank",
                   )
                 }
               >
                 <MessageCircle className="mr-2 w-5 h-5" />
-                Open WhatsApp
+                Continue on WhatsApp
               </Button>
             </div>
           ) : (
@@ -164,8 +219,11 @@ export default function ContactForm() {
                     onChange={set("name")}
                     placeholder="e.g. Tunde Adeyemi"
                     className={inputBase}
+                    disabled={isSubmitting}
                   />
-                  {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+                  {errors.name && (
+                    <p className="text-xs text-destructive">{errors.name}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
@@ -176,8 +234,11 @@ export default function ContactForm() {
                     onChange={set("phone")}
                     placeholder="+234 801 234 5678"
                     className={inputBase}
+                    disabled={isSubmitting}
                   />
-                  {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+                  {errors.phone && (
+                    <p className="text-xs text-destructive">{errors.phone}</p>
+                  )}
                 </div>
               </div>
 
@@ -193,19 +254,25 @@ export default function ContactForm() {
                     onChange={set("email")}
                     placeholder="you@company.com"
                     className={inputBase}
+                    disabled={isSubmitting}
                   />
-                  {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+                  {errors.email && (
+                    <p className="text-xs text-destructive">{errors.email}</p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
                     <Globe className="w-4 h-4 text-primary" /> Current Website{" "}
-                    <span className="text-muted-foreground font-normal text-xs">(optional)</span>
+                    <span className="text-muted-foreground font-normal text-xs">
+                      (optional)
+                    </span>
                   </label>
                   <input
                     value={form.website}
                     onChange={set("website")}
                     placeholder="www.yourwebsite.com"
                     className={inputBase}
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -213,22 +280,30 @@ export default function ContactForm() {
               {/* Service */}
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  <ChevronDown className="w-4 h-4 text-primary" /> What do you need help with?
+                  <ChevronDown className="w-4 h-4 text-primary" /> What do you
+                  need help with?
                 </label>
                 <div className="relative">
                   <select
                     value={form.service}
                     onChange={set("service")}
                     className={`${inputBase} appearance-none pr-10 cursor-pointer`}
+                    disabled={isSubmitting}
                   >
-                    <option value="" disabled>Select a service...</option>
+                    <option value="" disabled>
+                      Select a service...
+                    </option>
                     {SERVICES.map((s) => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
                     ))}
                   </select>
                   <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 </div>
-                {errors.service && <p className="text-xs text-destructive">{errors.service}</p>}
+                {errors.service && (
+                  <p className="text-xs text-destructive">{errors.service}</p>
+                )}
               </div>
 
               {/* Message */}
@@ -242,28 +317,49 @@ export default function ContactForm() {
                   rows={4}
                   placeholder="What does your business do? What's your biggest challenge right now?"
                   className={`${inputBase} resize-none`}
+                  disabled={isSubmitting}
                 />
-                {errors.message && <p className="text-xs text-destructive">{errors.message}</p>}
+                {errors.message && (
+                  <p className="text-xs text-destructive">{errors.message}</p>
+                )}
               </div>
+
+              {serverError && (
+                <div className="flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                  <span>{serverError}</span>
+                </div>
+              )}
 
               {/* Submit */}
               <div className="pt-2 flex flex-col sm:flex-row gap-3">
                 <Button
                   type="submit"
                   size="lg"
-                  className="flex-1 h-14 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 rounded-xl transition-all hover:scale-[1.02] active:scale-95 group"
+                  disabled={isSubmitting}
+                  className="flex-1 h-14 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/25 rounded-xl transition-all hover:scale-[1.02] active:scale-95 group disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
-                  <Send className="mr-2 w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
-                  Get My Free Audit
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="mr-2 w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
+                      Get My Free Audit
+                    </>
+                  )}
                 </Button>
                 <Button
                   type="button"
                   size="lg"
-                  className="flex-1 h-14 text-base font-bold bg-[#25D366] hover:bg-[#1ebe5d] text-white rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95"
+                  disabled={isSubmitting}
+                  className="flex-1 h-14 text-base font-bold bg-[#25D366] hover:bg-[#1ebe5d] text-white rounded-xl shadow-lg transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                   onClick={() =>
                     window.open(
                       `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Blaze Studio! I'd like to learn more about your services.")}`,
-                      "_blank"
+                      "_blank",
                     )
                   }
                 >
@@ -273,7 +369,7 @@ export default function ContactForm() {
               </div>
 
               <p className="text-center text-xs text-muted-foreground pt-1">
-                Your details are sent directly via WhatsApp. No spam, ever.
+                We reply within one business day. No spam, ever.
               </p>
             </form>
           )}

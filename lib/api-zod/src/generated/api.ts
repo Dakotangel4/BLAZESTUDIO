@@ -14,3 +14,43 @@ import * as zod from "zod";
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * Stores a new contact form submission
+ * @summary Submit a contact form
+ */
+export const createContactSubmissionBodyNameMin = 2;
+export const createContactSubmissionBodyNameMax = 120;
+
+export const createContactSubmissionBodyPhoneMin = 7;
+export const createContactSubmissionBodyPhoneMax = 30;
+
+export const createContactSubmissionBodyEmailMax = 200;
+
+export const createContactSubmissionBodyWebsiteMax = 200;
+
+export const createContactSubmissionBodyServiceMax = 120;
+
+export const createContactSubmissionBodyMessageMin = 10;
+export const createContactSubmissionBodyMessageMax = 4000;
+
+export const createContactSubmissionBodySourceMax = 60;
+
+export const CreateContactSubmissionBody = zod.object({
+  name: zod
+    .string()
+    .min(createContactSubmissionBodyNameMin)
+    .max(createContactSubmissionBodyNameMax),
+  phone: zod
+    .string()
+    .min(createContactSubmissionBodyPhoneMin)
+    .max(createContactSubmissionBodyPhoneMax),
+  email: zod.string().email().max(createContactSubmissionBodyEmailMax),
+  website: zod.string().max(createContactSubmissionBodyWebsiteMax).optional(),
+  service: zod.string().min(1).max(createContactSubmissionBodyServiceMax),
+  message: zod
+    .string()
+    .min(createContactSubmissionBodyMessageMin)
+    .max(createContactSubmissionBodyMessageMax),
+  source: zod.string().max(createContactSubmissionBodySourceMax).optional(),
+});

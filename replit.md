@@ -26,6 +26,23 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 
 See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
 
+## Architecture: dual workflow
+
+The app runs as two parallel processes:
+
+- **Start application** (`PORT=21028`) — Vite dev server for `@workspace/blaze-studio` (the public site). Vite proxies `/api/*` to the API server (`API_SERVER_URL`, defaults to `http://localhost:8000`).
+- **API server** (`PORT=8000`) — Express backend (`@workspace/api-server`) that owns all `/api` routes (health, contact submissions). Persists to Postgres via Drizzle (`@workspace/db`).
+
+In production the same proxy contract applies — the API server and the static frontend should be deployed together (e.g. behind a reverse proxy, or by having the API server serve the built `dist/public/` of blaze-studio).
+
+### Adding API endpoints
+
+Follow the contract-first flow: edit `lib/api-spec/openapi.yaml`, then `pnpm --filter @workspace/api-spec run codegen`, then add a route handler in `artifacts/api-server/src/routes/`. Frontend uses the generated React Query hooks from `@workspace/api-client-react`.
+
+### Database
+
+`contact_submissions` table stores leads from the contact form. Schema lives in `lib/db/src/schema/`. Push schema changes with `pnpm --filter @workspace/db run push`.
+
 ## Blaze Studio (artifact)
 
 Multi-page React + Vite site using `wouter` for routing. Routes:

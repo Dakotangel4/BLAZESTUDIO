@@ -14,15 +14,20 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, [location]);
 
+  // Suppress redundant lead-capture surfaces on the contact page itself —
+  // the page IS the conversion target, so re-prompting with a sticky CTA,
+  // exit-intent popup, or live notifications would feel duplicative and noisy.
+  const isContactPage = location === "/contact";
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
-      <StickyCTABar />
+      {!isContactPage && <StickyCTABar />}
       <WhatsAppFloat />
-      <LiveNotifications />
-      <ExitIntentPopup />
+      {!isContactPage && <LiveNotifications />}
+      {!isContactPage && <ExitIntentPopup />}
     </div>
   );
 }
