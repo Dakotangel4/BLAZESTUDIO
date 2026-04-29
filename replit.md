@@ -35,6 +35,10 @@ Multi-page React + Vite site using `wouter` for routing. Routes:
 - `/services` — Services + Process
 - `/portfolio` — Portfolio
 - `/testimonials` — Testimonials
+- `/blog` — Blaze Insights index (featured + filterable grid + newsletter)
+- `/blog/:slug` — Long-form article detail (reading-progress bar, sticky ToC, callouts/stats/lists, share, author card, related posts, CTA)
 - `/contact` — Problem, Contact form, FAQ
 
 Shared layout in `src/components/layout/site-layout.tsx` wraps every page with the navbar, footer, sticky CTA, WhatsApp float, live notifications, and exit-intent popup. Cross-page navigation (with optional anchor scroll) goes through the `useNav` hook in `src/hooks/use-nav.ts`.
+
+Blog content lives in `src/lib/posts.ts` as a typed `POSTS` array of structured `Block`s (h2/h3/p/list/quote/callout/stats/divider). Blog focus: AI-integrated websites for businesses. Both `/blog` and `/blog/:slug` consume this single source.
