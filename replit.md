@@ -41,7 +41,15 @@ Follow the contract-first flow: edit `lib/api-spec/openapi.yaml`, then `pnpm --f
 
 ### Database
 
-`contact_submissions` table stores leads from the contact form. Schema lives in `lib/db/src/schema/`. Push schema changes with `pnpm --filter @workspace/db run push`.
+`contact_submissions` table stores leads from the contact form (with a `status` column: `new` | `reviewed` | `responded`). Schema lives in `lib/db/src/schema/`. Push schema changes with `pnpm --filter @workspace/db run push`.
+
+## Admin Console (`/admin`)
+
+Password-protected internal tool for managing leads, with a dark sidebar layout.
+
+- **Login**: `/admin/login`. Backed by `ADMIN_PASSWORD` (Replit secret) and signed session cookies (`ADMIN_SESSION_SECRET`, auto-generated, 12h TTL, HttpOnly).
+- **Leads dashboard**: `/admin/leads`. Stats cards (total / new / today / this month), real-time search by name/email, status filter, date-range filter, sortable columns, pagination (10/25/50), inline status dropdown with color-coded badges, expand-row modal with full details, delete confirmation, CSV + PDF export, sonner toasts, loading skeletons, and an empty state.
+- **Endpoints**: `POST/GET /api/admin/{login,logout,session}`, `GET/PATCH/DELETE /api/admin/leads[/:id]` — auth enforced by `requireAdmin` middleware in `artifacts/api-server/src/lib/admin-auth.ts`.
 
 ## Blaze Studio (artifact)
 
