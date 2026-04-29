@@ -28,19 +28,19 @@ title = "SaaS AI dashboard mockup"
 id = "50fPgoKLZ7D6vRF-_4ZiN"
 uri = "file://artifacts/blaze-studio/src/assets/test-1.png"
 type = "image"
-title = "Nigerian business owner headshot"
+title = "generated_image"
 
 [[generated]]
 id = "k9_rGpda5uW0qQjMGq2bY"
 uri = "file://artifacts/blaze-studio/src/assets/test-2.png"
 type = "image"
-title = "African female entrepreneur headshot"
+title = "generated_image"
 
 [[generated]]
 id = "MmQsho1SvaBZGKxj6MOke"
 uri = "file://artifacts/blaze-studio/src/assets/test-3.png"
 type = "image"
-title = "Nigerian male CEO headshot"
+title = "generated_image"
 
 [[outputs]]
 id = "H0nbvdA3eyJeFaa6gHi_v"
