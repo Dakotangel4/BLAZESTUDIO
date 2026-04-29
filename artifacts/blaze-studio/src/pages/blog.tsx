@@ -10,6 +10,8 @@ import {
   Sparkles,
   Mail,
   Tag as TagIcon,
+  Users,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,7 +56,7 @@ export default function BlogPage() {
     <SiteLayout>
       <div className="pt-24">
         {/* Hero */}
-        <section className="relative pt-12 pb-12 sm:pt-16 sm:pb-14 md:pt-20 md:pb-16 overflow-hidden">
+        <section className="relative pt-10 pb-10 sm:pt-14 sm:pb-12 md:pt-16 md:pb-14 overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/12 via-background to-background -z-10" />
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.025] -z-10" />
 
@@ -65,11 +67,19 @@ export default function BlogPage() {
               transition={{ duration: 0.5 }}
               className="max-w-3xl"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/80 border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-5 sm:mb-6">
-                <Sparkles className="w-3.5 h-3.5" />
-                BLAZE INSIGHTS
+              {/* Editorial kicker */}
+              <div className="flex flex-wrap items-center gap-2.5 mb-5 sm:mb-6">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground text-background font-bold text-[10px] sm:text-[11px] tracking-[0.2em] uppercase">
+                  <Sparkles className="w-3 h-3" />
+                  Blaze Insights
+                </span>
+                <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] text-muted-foreground uppercase">
+                  <span className="w-6 h-px bg-border" />
+                  Edition 04 · Apr 2026
+                </span>
               </div>
-              <h1 className="text-[clamp(2.25rem,8vw,4.5rem)] font-extrabold tracking-[-0.02em] text-foreground leading-[1.05] mb-4 sm:mb-5 text-balance break-words">
+
+              <h1 className="text-[clamp(2.25rem,8vw,4.5rem)] font-extrabold tracking-[-0.025em] text-foreground leading-[1.04] mb-4 sm:mb-5 text-balance break-words">
                 AI-integrated websites,{" "}
                 <span className="text-primary">decoded for business owners.</span>
               </h1>
@@ -78,6 +88,32 @@ export default function BlogPage() {
                 AI to work inside your website — written by the team that ships it
                 for a living.
               </p>
+
+              {/* Meta strip */}
+              <div className="mt-7 sm:mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 pt-5 border-t border-border/70">
+                <div className="flex items-center gap-2 text-sm">
+                  <BookOpen className="w-4 h-4 text-primary" />
+                  <span className="font-bold text-foreground tabular-nums">
+                    {POSTS.length}
+                  </span>
+                  <span className="text-muted-foreground">articles</span>
+                </div>
+                <span className="hidden sm:inline w-1 h-1 rounded-full bg-muted-foreground/40" />
+                <div className="flex items-center gap-2 text-sm">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span className="font-bold text-foreground tabular-nums">
+                    {new Set(POSTS.map((p) => p.author)).size}
+                  </span>
+                  <span className="text-muted-foreground">expert contributors</span>
+                </div>
+                <span className="hidden sm:inline w-1 h-1 rounded-full bg-muted-foreground/40" />
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-muted-foreground">
+                    Updated <span className="font-semibold text-foreground">weekly</span>
+                  </span>
+                </div>
+              </div>
             </motion.div>
           </div>
         </section>

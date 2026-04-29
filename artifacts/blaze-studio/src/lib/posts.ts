@@ -36,6 +36,7 @@ export interface Post {
   gradient: string;
   pattern: string;
   tags: string[];
+  keyTakeaways: string[];
   featured?: boolean;
   content: Block[];
 }
@@ -61,6 +62,12 @@ export const POSTS: Post[] = [
     pattern:
       "radial-gradient(circle at 30% 40%, rgba(255,255,255,0.25) 0, transparent 50%)",
     tags: ["AI", "Conversion", "Revenue", "SMB"],
+    keyTakeaways: [
+      "AI on a website is plumbing, not a feature — it works when woven into the funnel.",
+      "Four systems do 80% of the impact: lead qualification, AI search, personalisation, content.",
+      "Total cost typically lands at $80–400/month — less than a part-time hire.",
+      "Ship one integration, measure for 30 days, then expand. Never all four at once.",
+    ],
     featured: true,
     content: [
       {
@@ -239,6 +246,12 @@ export const POSTS: Post[] = [
     pattern:
       "radial-gradient(circle at 70% 30%, rgba(255,255,255,0.18) 0, transparent 55%)",
     tags: ["AI", "Chatbots", "Customer Support", "UX"],
+    keyTakeaways: [
+      "AI wins repetitive factual questions; humans win emotion, negotiation and apologies.",
+      "Always offer a human escape hatch one click away from every AI message.",
+      "Aim for 60–75% of tickets fully resolved by AI within 60 days.",
+      "Train your AI on your top 20 real questions, not 'everything you know'.",
+    ],
     content: [
       {
         type: "p",
@@ -364,6 +377,12 @@ export const POSTS: Post[] = [
     pattern:
       "radial-gradient(circle at 20% 80%, rgba(255,255,255,0.2) 0, transparent 50%)",
     tags: ["Personalization", "Conversion", "AI"],
+    keyTakeaways: [
+      "Four signals (source, location, device, history) do 80% of the personalisation work.",
+      "Personalise hero, headline, CTA and proof — never pricing or navigation.",
+      "Subtlety wins. Don't reference the personal data in the copy.",
+      "Lifts of 20–40% on the homepage are typical when the writing is right.",
+    ],
     content: [
       {
         type: "p",
@@ -497,6 +516,12 @@ export const POSTS: Post[] = [
     pattern:
       "radial-gradient(circle at 50% 30%, rgba(255,255,255,0.22) 0, transparent 55%)",
     tags: ["SEO", "AI", "Content"],
+    keyTakeaways: [
+      "Google penalises low effort, not AI use. Add one piece of original info per article.",
+      "Strategy and angle stay human. AI handles outlining and first drafts only.",
+      "Always rewrite the intro, conclusion and one key section by hand.",
+      "Output triples; quality holds — if (and only if) the editing step is real.",
+    ],
     content: [
       {
         type: "p",
@@ -605,6 +630,12 @@ export const POSTS: Post[] = [
     pattern:
       "radial-gradient(circle at 80% 60%, rgba(255,255,255,0.2) 0, transparent 50%)",
     tags: ["Lead Generation", "AI", "Sales"],
+    keyTakeaways: [
+      "Calling leads in arrival order leaves money on the table.",
+      "Minimum useful dataset: 200 closed-won + 1,000 closed-lost deals.",
+      "Time-on-site, pricing-page visits and lead source do most of the predictive work.",
+      "Expect a 20–40% close-rate lift in the first 60 days.",
+    ],
     content: [
       {
         type: "p",
@@ -706,6 +737,12 @@ export const POSTS: Post[] = [
     pattern:
       "radial-gradient(circle at 40% 70%, rgba(255,255,255,0.22) 0, transparent 55%)",
     tags: ["AI Search", "E-commerce", "Conversion"],
+    keyTakeaways: [
+      "30–40% of site searches return zero results on a typical site.",
+      "Search users convert 2–3x higher — fix this before almost anything else.",
+      "Vector embeddings replace keyword matching for under $50/month.",
+      "Skip if your site has fewer than 50 indexable items — old search is fine.",
+    ],
     content: [
       {
         type: "p",
@@ -803,6 +840,12 @@ export const POSTS: Post[] = [
     pattern:
       "radial-gradient(circle at 60% 40%, rgba(255,255,255,0.2) 0, transparent 55%)",
     tags: ["AI Strategy", "Roadmap", "ROI"],
+    keyTakeaways: [
+      "Don't ship anything in the first two weeks. Audit and pick exactly one win.",
+      "Be able to fill the blanks: 'In 90 days this will move X from Y to Z.'",
+      "Expand only after the first integration is shipped, measured, and proven.",
+      "Treat AI rollout like hiring — one at a time, one owner, honest measurement.",
+    ],
     content: [
       {
         type: "p",
