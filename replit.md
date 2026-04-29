@@ -50,6 +50,9 @@ Password-protected internal tool for managing leads, with a dark sidebar layout.
 - **Login**: `/admin/login`. Backed by `ADMIN_PASSWORD` (Replit secret) and signed session cookies (`ADMIN_SESSION_SECRET`, auto-generated, 12h TTL, HttpOnly).
 - **Leads dashboard**: `/admin/leads`. Stats cards (total / new / today / this month), real-time search by name/email, status filter, date-range filter, sortable columns, pagination (10/25/50), inline status dropdown with color-coded badges, expand-row modal with full details, delete confirmation, CSV + PDF export, sonner toasts, loading skeletons, and an empty state.
 - **Endpoints**: `POST/GET /api/admin/{login,logout,session}`, `GET/PATCH/DELETE /api/admin/leads[/:id]` — auth enforced by `requireAdmin` middleware in `artifacts/api-server/src/lib/admin-auth.ts`.
+- **Blogs**: `/admin/blogs` (list with stats, search, status/category filters, sort, pagination, bulk publish/unpublish/delete), `/admin/blogs/new` and `/admin/blogs/edit/:id` (TipTap editor: H1–H4, bold/italic/underline, lists, blockquote, code, link, image upload as base64; auto-slug, featured image, excerpt, SEO collapsible with character counters, category select with inline create, tag chips, author, reading-time auto-calc, save draft / publish / schedule, autosave every 60s).
+- **Categories**: `/admin/blogs/categories` — inline add (name + description), edit, delete with post-count warning.
+- **Blog endpoints**: `GET/POST /api/admin/blog-posts`, `GET/PATCH/DELETE /api/admin/blog-posts/:id`, `POST /api/admin/blog-posts/bulk` (delete/publish/unpublish), `GET/POST /api/admin/blog-categories`, `PATCH/DELETE /api/admin/blog-categories/:id`. Server slugifies, dedupes slugs, computes reading time, and manages `publishedAt`/`scheduledAt` based on status. Tables `blog_posts` + `blog_categories` (FK with `set null` on category delete) live in `lib/db/src/schema/`.
 
 ## Blaze Studio (artifact)
 

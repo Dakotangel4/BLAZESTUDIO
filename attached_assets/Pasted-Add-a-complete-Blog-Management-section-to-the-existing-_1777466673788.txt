@@ -1,0 +1,68 @@
+Add a complete Blog Management section to the existing admin dashboard. It should live under /admin/blogs in the sidebar navigation, consistent with the current admin design system, dark sidebar, and existing UI components.
+Blog List Page (/admin/blogs):
+
+Table view of all blog posts
+Columns: Thumbnail, Title, Category, Author, Status (Draft / Published / Scheduled), Date Created, Last Modified, Actions
+Color-coded status badges (grey = Draft, green = Published, blue = Scheduled)
+Search bar to filter by title or category
+Filter by status and category
+Sort by date, title, or status
+Pagination with rows-per-page selector
+Bulk actions: bulk delete, bulk publish, bulk unpublish
+Quick action buttons per row: Edit, Preview, Delete
+Delete with confirmation modal
+Toast notifications for all actions
+
+Create / Edit Blog Post Page (/admin/blogs/new and /admin/blogs/edit/:id):
+
+Full rich text editor (use TipTap or Quill) with support for: headings (H1–H4), bold, italic, underline, bullet & numbered lists, blockquotes, code blocks, inline links, embedded images
+Featured image upload with preview and remove option
+Title field (auto-generates URL slug below it, editable)
+Meta Title and Meta Description fields (SEO section, collapsible)
+Character counters on meta fields (60 chars for title, 160 for description)
+Category selector (dropdown, with option to create new category inline)
+Tags input field (comma-separated, shown as chips)
+Author field (auto-filled with logged-in admin, editable)
+Reading time estimator (auto-calculated from word count)
+Publish options panel (right sidebar or bottom panel):
+
+Save as Draft
+Publish Now
+Schedule for later (date + time picker)
+
+
+Autosave every 60 seconds with "Last saved at..." indicator
+Preview button that opens a live preview in a new tab
+
+Blog Stats Cards (top of /admin/blogs):
+
+Total posts
+Published posts
+Draft posts
+Posts published this month
+
+Categories Management (/admin/blogs/categories):
+
+List all categories with post count per category
+Add new category (name + optional description + slug)
+Edit and delete category with confirmation
+Warn before deleting a category that has posts assigned
+
+Other Standards:
+
+Empty state UI when no posts exist with a "Create your first post" CTA
+Loading skeletons while fetching
+All blog posts saved to the existing database
+Fully responsive on tablet and desktop
+Consistent with all existing admin panel UI, colors, and component styles
+
+
+
+Key things this covers that most people miss:
+
+SEO fields — meta title and description built in so every post is Google-ready
+Scheduling — publish future posts automatically
+Autosave — no lost work mid-writing
+Categories + Tags — proper content structure for SEO
+Reading time — professional blog standard
+Slug editor — clean URLs for every post

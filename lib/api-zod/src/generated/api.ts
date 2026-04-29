@@ -143,3 +143,271 @@ export const AdminDeleteLeadResponse = zod.object({
   id: zod.number(),
   deleted: zod.boolean(),
 });
+
+/**
+ * @summary List blog categories
+ */
+export const AdminListBlogCategoriesResponse = zod.object({
+  categories: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      slug: zod.string(),
+      description: zod.string().nullish(),
+      postCount: zod.number(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Create a blog category
+ */
+export const adminCreateBlogCategoryBodyNameMax = 80;
+
+export const adminCreateBlogCategoryBodySlugMax = 80;
+
+export const adminCreateBlogCategoryBodyDescriptionMax = 500;
+
+export const AdminCreateBlogCategoryBody = zod.object({
+  name: zod.string().min(1).max(adminCreateBlogCategoryBodyNameMax),
+  slug: zod.string().min(1).max(adminCreateBlogCategoryBodySlugMax).optional(),
+  description: zod
+    .string()
+    .max(adminCreateBlogCategoryBodyDescriptionMax)
+    .nullish(),
+});
+
+/**
+ * @summary Update a blog category
+ */
+export const AdminUpdateBlogCategoryParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const adminUpdateBlogCategoryBodyNameMax = 80;
+
+export const adminUpdateBlogCategoryBodySlugMax = 80;
+
+export const adminUpdateBlogCategoryBodyDescriptionMax = 500;
+
+export const AdminUpdateBlogCategoryBody = zod.object({
+  name: zod.string().min(1).max(adminUpdateBlogCategoryBodyNameMax),
+  slug: zod.string().min(1).max(adminUpdateBlogCategoryBodySlugMax).optional(),
+  description: zod
+    .string()
+    .max(adminUpdateBlogCategoryBodyDescriptionMax)
+    .nullish(),
+});
+
+export const AdminUpdateBlogCategoryResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  slug: zod.string(),
+  description: zod.string().nullish(),
+  postCount: zod.number(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a blog category
+ */
+export const AdminDeleteBlogCategoryParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminDeleteBlogCategoryResponse = zod.object({
+  id: zod.number(),
+  deleted: zod.boolean(),
+});
+
+/**
+ * @summary List all blog posts
+ */
+export const AdminListBlogPostsResponse = zod.object({
+  posts: zod.array(
+    zod.object({
+      id: zod.number(),
+      title: zod.string(),
+      slug: zod.string(),
+      excerpt: zod.string(),
+      content: zod.string(),
+      featuredImage: zod.string().nullish(),
+      metaTitle: zod.string(),
+      metaDescription: zod.string(),
+      categoryId: zod.number().nullish(),
+      categoryName: zod.string().nullish(),
+      tags: zod.array(zod.string()),
+      author: zod.string(),
+      status: zod.enum(["draft", "published", "scheduled"]),
+      scheduledAt: zod.coerce.date().nullish(),
+      publishedAt: zod.coerce.date().nullish(),
+      readingTime: zod.number(),
+      createdAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Create a blog post
+ */
+export const adminCreateBlogPostBodyTitleMax = 200;
+
+export const adminCreateBlogPostBodySlugMax = 200;
+
+export const adminCreateBlogPostBodyExcerptMax = 500;
+
+export const adminCreateBlogPostBodyContentMax = 200000;
+
+export const adminCreateBlogPostBodyMetaTitleMax = 200;
+
+export const adminCreateBlogPostBodyMetaDescriptionMax = 400;
+
+export const adminCreateBlogPostBodyTagsItemMax = 60;
+
+export const adminCreateBlogPostBodyTagsMax = 20;
+
+export const adminCreateBlogPostBodyAuthorMax = 120;
+
+export const AdminCreateBlogPostBody = zod.object({
+  title: zod.string().min(1).max(adminCreateBlogPostBodyTitleMax).optional(),
+  slug: zod.string().min(1).max(adminCreateBlogPostBodySlugMax).optional(),
+  excerpt: zod.string().max(adminCreateBlogPostBodyExcerptMax).optional(),
+  content: zod.string().max(adminCreateBlogPostBodyContentMax).optional(),
+  featuredImage: zod.string().nullish(),
+  metaTitle: zod.string().max(adminCreateBlogPostBodyMetaTitleMax).optional(),
+  metaDescription: zod
+    .string()
+    .max(adminCreateBlogPostBodyMetaDescriptionMax)
+    .optional(),
+  categoryId: zod.number().nullish(),
+  tags: zod
+    .array(zod.string().max(adminCreateBlogPostBodyTagsItemMax))
+    .max(adminCreateBlogPostBodyTagsMax)
+    .optional(),
+  author: zod.string().max(adminCreateBlogPostBodyAuthorMax).optional(),
+  status: zod.enum(["draft", "published", "scheduled"]).optional(),
+  scheduledAt: zod.coerce.date().nullish(),
+});
+
+/**
+ * @summary Get a single blog post
+ */
+export const AdminGetBlogPostParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminGetBlogPostResponse = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  slug: zod.string(),
+  excerpt: zod.string(),
+  content: zod.string(),
+  featuredImage: zod.string().nullish(),
+  metaTitle: zod.string(),
+  metaDescription: zod.string(),
+  categoryId: zod.number().nullish(),
+  categoryName: zod.string().nullish(),
+  tags: zod.array(zod.string()),
+  author: zod.string(),
+  status: zod.enum(["draft", "published", "scheduled"]),
+  scheduledAt: zod.coerce.date().nullish(),
+  publishedAt: zod.coerce.date().nullish(),
+  readingTime: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Update a blog post
+ */
+export const AdminUpdateBlogPostParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const adminUpdateBlogPostBodyTitleMax = 200;
+
+export const adminUpdateBlogPostBodySlugMax = 200;
+
+export const adminUpdateBlogPostBodyExcerptMax = 500;
+
+export const adminUpdateBlogPostBodyContentMax = 200000;
+
+export const adminUpdateBlogPostBodyMetaTitleMax = 200;
+
+export const adminUpdateBlogPostBodyMetaDescriptionMax = 400;
+
+export const adminUpdateBlogPostBodyTagsItemMax = 60;
+
+export const adminUpdateBlogPostBodyTagsMax = 20;
+
+export const adminUpdateBlogPostBodyAuthorMax = 120;
+
+export const AdminUpdateBlogPostBody = zod.object({
+  title: zod.string().min(1).max(adminUpdateBlogPostBodyTitleMax).optional(),
+  slug: zod.string().min(1).max(adminUpdateBlogPostBodySlugMax).optional(),
+  excerpt: zod.string().max(adminUpdateBlogPostBodyExcerptMax).optional(),
+  content: zod.string().max(adminUpdateBlogPostBodyContentMax).optional(),
+  featuredImage: zod.string().nullish(),
+  metaTitle: zod.string().max(adminUpdateBlogPostBodyMetaTitleMax).optional(),
+  metaDescription: zod
+    .string()
+    .max(adminUpdateBlogPostBodyMetaDescriptionMax)
+    .optional(),
+  categoryId: zod.number().nullish(),
+  tags: zod
+    .array(zod.string().max(adminUpdateBlogPostBodyTagsItemMax))
+    .max(adminUpdateBlogPostBodyTagsMax)
+    .optional(),
+  author: zod.string().max(adminUpdateBlogPostBodyAuthorMax).optional(),
+  status: zod.enum(["draft", "published", "scheduled"]).optional(),
+  scheduledAt: zod.coerce.date().nullish(),
+});
+
+export const AdminUpdateBlogPostResponse = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  slug: zod.string(),
+  excerpt: zod.string(),
+  content: zod.string(),
+  featuredImage: zod.string().nullish(),
+  metaTitle: zod.string(),
+  metaDescription: zod.string(),
+  categoryId: zod.number().nullish(),
+  categoryName: zod.string().nullish(),
+  tags: zod.array(zod.string()),
+  author: zod.string(),
+  status: zod.enum(["draft", "published", "scheduled"]),
+  scheduledAt: zod.coerce.date().nullish(),
+  publishedAt: zod.coerce.date().nullish(),
+  readingTime: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a blog post
+ */
+export const AdminDeleteBlogPostParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const AdminDeleteBlogPostResponse = zod.object({
+  id: zod.number(),
+  deleted: zod.boolean(),
+});
+
+/**
+ * @summary Bulk action on blog posts (delete / publish / unpublish)
+ */
+
+export const AdminBulkBlogPostsBody = zod.object({
+  ids: zod.array(zod.number()).min(1),
+  action: zod.enum(["delete", "publish", "unpublish"]),
+});
+
+export const AdminBulkBlogPostsResponse = zod.object({
+  affected: zod.number(),
+  action: zod.string(),
+});

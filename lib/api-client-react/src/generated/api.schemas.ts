@@ -89,6 +89,116 @@ export interface AdminDeleteResult {
   deleted: boolean;
 }
 
+export type BlogStatus = (typeof BlogStatus)[keyof typeof BlogStatus];
+
+export const BlogStatus = {
+  draft: "draft",
+  published: "published",
+  scheduled: "scheduled",
+} as const;
+
+export interface AdminBlogCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  postCount: number;
+  createdAt: string;
+}
+
+export interface AdminBlogCategoryList {
+  categories: AdminBlogCategory[];
+}
+
+export interface AdminBlogCategoryInput {
+  /**
+   * @minLength 1
+   * @maxLength 80
+   */
+  name: string;
+  /**
+   * @minLength 1
+   * @maxLength 80
+   */
+  slug?: string;
+  /** @maxLength 500 */
+  description?: string | null;
+}
+
+export interface AdminBlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  featuredImage?: string | null;
+  metaTitle: string;
+  metaDescription: string;
+  categoryId?: number | null;
+  categoryName?: string | null;
+  tags: string[];
+  author: string;
+  status: BlogStatus;
+  scheduledAt?: string | null;
+  publishedAt?: string | null;
+  readingTime: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminBlogPostList {
+  posts: AdminBlogPost[];
+}
+
+export interface AdminBlogPostInput {
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  title?: string;
+  /**
+   * @minLength 1
+   * @maxLength 200
+   */
+  slug?: string;
+  /** @maxLength 500 */
+  excerpt?: string;
+  /** @maxLength 200000 */
+  content?: string;
+  featuredImage?: string | null;
+  /** @maxLength 200 */
+  metaTitle?: string;
+  /** @maxLength 400 */
+  metaDescription?: string;
+  categoryId?: number | null;
+  /** @maxItems 20 */
+  tags?: string[];
+  /** @maxLength 120 */
+  author?: string;
+  status?: BlogStatus;
+  scheduledAt?: string | null;
+}
+
+export type AdminBlogBulkInputAction =
+  (typeof AdminBlogBulkInputAction)[keyof typeof AdminBlogBulkInputAction];
+
+export const AdminBlogBulkInputAction = {
+  delete: "delete",
+  publish: "publish",
+  unpublish: "unpublish",
+} as const;
+
+export interface AdminBlogBulkInput {
+  /** @minItems 1 */
+  ids: number[];
+  action: AdminBlogBulkInputAction;
+}
+
+export interface AdminBlogBulkResult {
+  affected: number;
+  action: string;
+}
+
 export interface ErrorResponse {
   error: string;
   details?: string[];

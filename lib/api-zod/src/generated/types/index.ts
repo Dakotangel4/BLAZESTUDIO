@@ -6,12 +6,22 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./adminBlogBulkInput";
+export * from "./adminBlogBulkInputAction";
+export * from "./adminBlogBulkResult";
+export * from "./adminBlogCategory";
+export * from "./adminBlogCategoryInput";
+export * from "./adminBlogCategoryList";
+export * from "./adminBlogPost";
+export * from "./adminBlogPostInput";
+export * from "./adminBlogPostList";
 export * from "./adminDeleteResult";
 export * from "./adminLead";
 export * from "./adminLeadList";
 export * from "./adminLeadUpdateInput";
 export * from "./adminLoginInput";
 export * from "./adminSession";
+export * from "./blogStatus";
 export * from "./contactSubmissionInput";
 export * from "./contactSubmissionResult";
 export * from "./errorResponse";

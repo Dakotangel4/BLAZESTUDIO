@@ -1,11 +1,12 @@
 import { type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import {
-  LayoutDashboard,
   Inbox,
   LogOut,
   ExternalLink,
   Flame,
+  FileText,
+  FolderTree,
 } from "lucide-react";
 import { useAdminLogout } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -13,8 +14,20 @@ import { toast } from "sonner";
 
 const NAV = [
   { href: "/admin/leads", label: "Leads", icon: Inbox },
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/blogs", label: "Blogs", icon: FileText },
+  { href: "/admin/blogs/categories", label: "Categories", icon: FolderTree },
 ];
+
+function isNavActive(navHref: string, current: string): boolean {
+  if (navHref === "/admin/blogs") {
+    return (
+      current === "/admin/blogs" ||
+      (current.startsWith("/admin/blogs/") &&
+        !current.startsWith("/admin/blogs/categories"))
+    );
+  }
+  return current === navHref || current.startsWith(`${navHref}/`);
+}
 
 export default function AdminLayout({
   title,
@@ -58,7 +71,7 @@ export default function AdminLayout({
 
         <nav className="flex-1 px-3 py-4 space-y-1">
           {NAV.map((item) => {
-            const active = location.startsWith(item.href);
+            const active = isNavActive(item.href, location);
             const Icon = item.icon;
             return (
               <Link
@@ -126,7 +139,7 @@ export default function AdminLayout({
           {/* Mobile nav */}
           <div className="md:hidden flex gap-1 overflow-x-auto px-3 pb-2">
             {NAV.map((item) => {
-              const active = location.startsWith(item.href);
+              const active = isNavActive(item.href, location);
               const Icon = item.icon;
               return (
                 <Link
