@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Flame, Target, Heart, Sparkles, ArrowRight, Rocket, Quote } from "lucide-react";
+import { Flame, Target, Heart, Sparkles, ArrowRight, Rocket, Quote, Mic, Newspaper, Calendar, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SiteLayout from "@/components/layout/site-layout";
 import Cta from "@/components/sections/cta";
@@ -236,6 +236,100 @@ export default function AboutPage() {
                     </p>
                   </div>
                 </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Speaking & Press */}
+        <section className="py-24 border-t bg-secondary/20">
+          <div className="container mx-auto px-4 md:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="max-w-2xl mx-auto text-center mb-14"
+            >
+              <div className="text-sm font-bold text-primary tracking-widest mb-3">
+                SPEAKING &amp; PRESS
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
+                Available for talks, podcasts and interviews.
+              </h2>
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                Akpomovine speaks with founders, journalists and operator communities
+                about building websites that compound into real revenue.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-12">
+              {[
+                {
+                  Icon: Mic,
+                  title: "Conferences & meetups",
+                  body: "Keynotes and workshops on conversion-focused web design, AI-augmented studios, and African digital growth.",
+                },
+                {
+                  Icon: Newspaper,
+                  title: "Podcast & media",
+                  body: "Long-form conversations on entrepreneurship, design craft, and turning websites into pipeline engines.",
+                },
+                {
+                  Icon: Calendar,
+                  title: "Private workshops",
+                  body: "Closed sessions for founder communities, accelerators, and in-house product teams — booked one quarter in advance.",
+                },
+              ].map((item, i) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.06 }}
+                  className="bg-background border rounded-2xl p-7 hover:border-primary/40 hover:shadow-lg transition-all"
+                >
+                  <div className="w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
+                    <item.Icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {item.body}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="max-w-3xl mx-auto"
+            >
+              <div className="rounded-2xl border bg-background p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-6 justify-between">
+                <div className="flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-foreground">
+                      Booking &amp; press inquiries
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Send a brief, audience size, and your timeline. We respond within
+                      one business day.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/contact", "contact-form")}
+                  className="h-12 px-6 text-sm font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20 transition-all hover:scale-105 active:scale-95 group shrink-0 self-stretch md:self-auto"
+                >
+                  Get in touch
+                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
               </div>
             </motion.div>
           </div>
