@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Flame, Target, Heart, Sparkles, ArrowRight, Rocket } from "lucide-react";
+import { Flame, Target, Heart, Sparkles, ArrowRight, Rocket, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SiteLayout from "@/components/layout/site-layout";
 import Cta from "@/components/sections/cta";
@@ -177,6 +177,66 @@ export default function AboutPage() {
                   </li>
                 ))}
               </ul>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Founder's Letter */}
+        <section className="py-24 border-t">
+          <div className="container mx-auto px-4 md:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="max-w-4xl mx-auto"
+            >
+              <div className="text-sm font-bold text-primary tracking-widest mb-3 text-center">
+                A NOTE FROM THE FOUNDER
+              </div>
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-center mb-12">
+                Why I started Blaze Studio.
+              </h2>
+
+              <div className="relative bg-secondary/40 border rounded-3xl p-8 md:p-12">
+                <Quote className="absolute -top-4 left-8 w-10 h-10 text-primary bg-background rounded-full p-2 border" aria-hidden />
+
+                <div className="flex flex-col md:flex-row gap-8 items-start">
+                  <div className="flex md:flex-col items-center md:items-start gap-4 md:gap-3 shrink-0">
+                    <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl bg-primary/15 text-primary flex items-center justify-center text-2xl md:text-3xl font-extrabold ring-4 ring-primary/10">
+                      AJ
+                    </div>
+                    <div className="md:mt-2">
+                      <div className="font-bold text-foreground text-lg leading-tight">
+                        Akpomovine Jerrison
+                      </div>
+                      <div className="text-sm text-primary font-semibold mt-0.5">
+                        Founder &amp; CEO
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 text-muted-foreground text-base md:text-lg leading-relaxed">
+                    <p>
+                      I grew up watching brilliant Nigerian businesses lose to competitors
+                      with worse products but better websites. That always sat wrong with me.
+                      A great brand deserves a digital home that does its work — not a
+                      template that quietly pushes customers away.
+                    </p>
+                    <p>
+                      Blaze Studio is my answer to that. We're a senior-only team because
+                      founders deserve senior thinking. We measure success in pipeline, leads
+                      and revenue — not in awards or design Twitter applause. And we treat
+                      every client the way I'd want to be treated: honest opinions, fast
+                      replies, and work that actually moves the number.
+                    </p>
+                    <p className="text-foreground font-medium">
+                      If you're building something you believe in, we'd love to help you
+                      build the website it deserves.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </div>
         </section>
