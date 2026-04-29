@@ -38,9 +38,9 @@ const milestones = [
 
 const team = [
   {
-    name: "Adaeze O.",
-    role: "Founder & Strategy",
-    initials: "AO",
+    name: "Akpomovine Jerrison",
+    role: "Founder & CEO",
+    initials: "AJ",
     color: "bg-primary/15 text-primary",
   },
   {
