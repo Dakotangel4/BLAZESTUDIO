@@ -3,6 +3,16 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useNav } from "@/hooks/use-nav";
 
+// Hero media — imported through Vite's asset graph so each file is
+// emitted with an 8-char content-hash filename in production
+// (e.g. /assets/hero-bg-a3f92b1c.webm). Combined with the long-cache
+// immutable headers set by the API server, browsers can cache these
+// for one year and only re-download when the file content changes.
+import heroWebmUrl from "@/assets/hero/hero-bg.webm?url";
+import heroMp4Url from "@/assets/hero/hero-bg.mp4?url";
+import heroMobileMp4Url from "@/assets/hero/hero-bg-mobile.mp4?url";
+import heroPosterUrl from "@/assets/hero/hero-fallback.jpg?url";
+
 type Particle = {
   x: number;
   y: number;
@@ -327,6 +337,7 @@ export default function Hero() {
   // Mobile (<768px): swap the heavy 1080p sources for a lighter 720p
   // mobile-optimized MP4 so cellular users aren't pulling 7MB just for
   // ambience. Runs once on mount before the browser starts decoding.
+  // The mobile URL uses the same Vite-hashed filename strategy.
   useEffect(() => {
     if (reduceMotion) return;
     if (typeof window === "undefined") return;
@@ -337,7 +348,7 @@ export default function Hero() {
 
     const sources = video.querySelectorAll("source");
     sources.forEach((src) => {
-      src.src = "/assets/video/hero-bg-mobile.mp4";
+      src.src = heroMobileMp4Url;
       src.type = "video/mp4";
     });
     video.load();
@@ -406,7 +417,7 @@ export default function Hero() {
           muted
           playsInline
           preload="auto"
-          poster="/assets/images/hero-fallback.jpg"
+          poster={heroPosterUrl}
           onCanPlayThrough={(e) => {
             (e.currentTarget as HTMLVideoElement).style.opacity = "1";
           }}
@@ -414,8 +425,8 @@ export default function Hero() {
             (e.currentTarget as HTMLVideoElement).style.display = "none";
           }}
         >
-          <source src="/assets/video/hero-bg.webm" type="video/webm" />
-          <source src="/assets/video/hero-bg.mp4" type="video/mp4" />
+          <source src={heroWebmUrl} type="video/webm" />
+          <source src={heroMp4Url} type="video/mp4" />
         </video>
       )}
 

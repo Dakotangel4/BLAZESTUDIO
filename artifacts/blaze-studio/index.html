@@ -5,9 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>Blaze Studio</title>
     <link rel="icon" type="image/png" href="/logo.png" />
+
+    <!-- Preconnect to Google Fonts so the TLS handshake overlaps with HTML parse -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!--
+      Static poster preload — a 22 KB JPG that's both the <video poster>
+      AND the .hero-fire-bg CSS fallback. Loading it first means the
+      hero never renders as a black box: the dark ember frame paints
+      immediately, the video fades in over it on canplaythrough.
+      Vite rewrites /src/... to the hashed production URL at build time.
+      (Note: the video itself uses <video preload="auto">, which is the
+      most reliably-supported way to start the byte fetch early. The
+      `<link rel="preload" as="video">` form prints a console warning
+      in Chromium because `as="video"` isn't yet in the official
+      destinations list.)
+    -->
+    <link
+      rel="preload"
+      as="image"
+      href="/src/assets/hero/hero-fallback.jpg"
+    >
   </head>
   <body>
     <div id="root"></div>

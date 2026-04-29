@@ -33,7 +33,15 @@ The app runs as two parallel processes:
 - **Start application** (`PORT=21028`) — Vite dev server for `@workspace/blaze-studio` (the public site). Vite proxies `/api/*` to the API server (`API_SERVER_URL`, defaults to `http://localhost:8000`).
 - **API server** (`PORT=8000`) — Express backend (`@workspace/api-server`) that owns all `/api` routes (health, contact submissions). Persists to Postgres via Drizzle (`@workspace/db`).
 
-In production the same proxy contract applies — the API server and the static frontend should be deployed together (e.g. behind a reverse proxy, or by having the API server serve the built `dist/public/` of blaze-studio).
+In production the **API server itself serves the built frontend**. When `NODE_ENV=production`, `artifacts/api-server/src/app.ts` mounts `artifacts/blaze-studio/dist/public/` as static files (override path with the `STATIC_DIR` env var) and falls through to `index.html` for unmatched non-API paths. Production deploy command: `pnpm -r build && NODE_ENV=production node artifacts/api-server/dist/index.mjs`.
+
+### Asset caching strategy
+
+- **Hashed assets** (`/assets/*`) — Vite content-hashes every JS, CSS, image, and the hero video files (because they live in `src/assets/hero/` and are imported through the asset graph, not in `public/`). The API server returns `Cache-Control: public, max-age=31536000, immutable` for everything under `/assets/*`, so browsers cache them for one full year and never revalidate. When a file changes, the hash changes, and the new URL forces a fresh download automatically.
+- **HTML shell** (`index.html` and SPA fallback) — returned with `Cache-Control: no-cache` so every visit revalidates and immediately picks up the new hashed asset URLs after a deploy.
+- **Other root-level static files** (favicon, logo, robots.txt) — moderate `max-age=1h` with ETag revalidation, since they are not content-hashed by Vite.
+- **Range requests** — Express 5's `express.static` natively returns `Accept-Ranges: bytes` and serves `206 Partial Content`, so the hero video can start playing before it's fully downloaded.
+- **Hero video preload** — `index.html` includes a `<link rel="preload" as="image">` for the static poster JPG (Vite rewrites the `/src/...` href to the hashed URL during build); the video itself relies on `<video preload="auto">` plus the JS-bundle import, which start the byte fetch as soon as the JS loads. Mobile (`<768px`) swaps the desktop sources for a lighter 720p mobile MP4 inside a `useEffect` before the browser begins decoding.
 
 ### Adding API endpoints
 

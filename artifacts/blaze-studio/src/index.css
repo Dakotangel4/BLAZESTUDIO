@@ -155,10 +155,13 @@
    - Visible if the video errors out, autoplay is blocked, or the
      user prefers reduced motion
    - Same dark ember frame extracted from the hero clip, so the
-     transition into the playing video is invisible */
+     transition into the playing video is invisible
+   - Path resolves through Vite's asset graph → Vite emits the JPG
+     with an 8-char content hash and rewrites the url() reference
+     in the built CSS automatically */
 .hero-fire-bg {
   background-color: #080808;
-  background-image: url("/assets/images/hero-fallback.jpg");
+  background-image: url("./assets/hero/hero-fallback.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -207,6 +210,6 @@
    skips rendering <video> and <canvas> when reduced motion is preferred. */
 @media (prefers-reduced-motion: reduce) {
   .hero-fire-bg {
-    background-image: url("/assets/images/hero-fallback.jpg");
+    background-image: url("./assets/hero/hero-fallback.jpg");
   }
 }

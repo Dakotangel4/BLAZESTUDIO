@@ -1,0 +1,249 @@
+Act as an expert frontend developer and web performance engineer.
+
+The Blaze Studio hero section is fully built with a self-hosted 
+local video file in assets/video/. Now I need you to implement 
+a professional caching and asset optimization strategy so the 
+site loads as fast as possible on every visit — first load 
+and repeat visits.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OBJECTIVE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Implement a long-cache + content-hash filename strategy across 
+all static assets so that:
+
+  1. Browsers and CDNs cache assets aggressively (up to 1 year)
+  2. When a file changes, the new hash forces a fresh download
+  3. Unchanged files are NEVER re-downloaded on repeat visits
+  4. The hero video, canvas script, CSS, and images all benefit
+  5. Page load speed improves measurably — especially on mobile 
+     and slow connections
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. CONTENT HASHING — RENAME ALL ASSETS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Rename every static asset using an 8-character MD5/SHA content 
+hash appended to the filename before the extension:
+
+  BEFORE:
+    assets/video/hero-bg.mp4
+    assets/video/hero-bg.webm
+    assets/video/hero-bg-mobile.mp4
+    assets/images/hero-fallback.jpg
+    assets/css/style.css
+    assets/js/canvas.js
+
+  AFTER (example hashes — generate real ones from file content):
+    assets/video/hero-bg.[hash8].mp4
+    assets/video/hero-bg.[hash8].webm
+    assets/video/hero-bg-mobile.[hash8].mp4
+    assets/images/hero-fallback.[hash8].jpg
+    assets/css/style.[hash8].css
+    assets/js/canvas.[hash8].js
+
+Generate the hash using Node.js:
+
+  const crypto = require('crypto');
+  const fs = require('fs');
+
+  function hashFile(filePath) {
+    const buffer = fs.readFileSync(filePath);
+    return crypto.createHash('md5')
+      .update(buffer)
+      .digest('hex')
+      .slice(0, 8);
+  }
+
+Create a build script (scripts/hash-assets.js) that:
+  - Reads every file in /assets
+  - Computes its 8-char content hash
+  - Copies it to /dist with the hashed filename
+  - Outputs a manifest.json mapping old names to new names
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. ASSET MANIFEST FILE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The build script must generate a manifest.json in /dist:
+
+  {
+    "assets/video/hero-bg.mp4": 
+      "assets/video/hero-bg.a3f92b1c.mp4",
+    "assets/video/hero-bg.webm": 
+      "assets/video/hero-bg.a3f92b1c.webm",
+    "assets/video/hero-bg-mobile.mp4": 
+      "assets/video/hero-bg-mobile.7d841e2a.mp4",
+    "assets/images/hero-fallback.jpg": 
+      "assets/images/hero-fallback.c91b3f44.jpg",
+    "assets/css/style.css": 
+      "assets/css/style.b2209d81.css",
+    "assets/js/canvas.js": 
+      "assets/js/canvas.f4a71c38.js"
+  }
+
+The HTML build step reads this manifest and rewrites all 
+src, href, and url() references in index.html automatically 
+before deploying — zero manual updates required.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. HTTP CACHE HEADERS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Configure the server to send the correct headers for every 
+asset type. Implement this for whichever server is in use 
+(Express, Nginx, Netlify, Vercel, or Replit):
+
+HASHED STATIC ASSETS (video, images, CSS, JS):
+  Cache-Control: public, max-age=31536000, immutable
+  — 1 full year, immutable tells the browser never check again
+
+HTML FILES (index.html):
+  Cache-Control: no-cache
+  — Always re-validate HTML so new asset hashes are picked up
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CONFIG FOR EACH PLATFORM:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IF USING EXPRESS (Node.js):
+  app.use('/assets', express.static('dist/assets', {
+    maxAge: '1y',
+    immutable: true
+  }));
+  app.get('/', (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(path.join(__dirname, 'dist/index.html'));
+  });
+
+IF USING NETLIFY (_headers file in project root):
+  /assets/*
+    Cache-Control: public, max-age=31536000, immutable
+
+  /index.html
+    Cache-Control: no-cache
+
+  /*.html
+    Cache-Control: no-cache
+
+IF USING VERCEL (vercel.json):
+  {
+    "headers": [
+      {
+        "source": "/assets/(.*)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "/(.*).html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      }
+    ]
+  }
+
+IF USING NGINX:
+  location /assets/ {
+    expires 1y;
+    add_header Cache-Control "public, max-age=31536000, immutable";
+    access_log off;
+  }
+
+  location = /index.html {
+    add_header Cache-Control "no-cache";
+  }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. VIDEO-SPECIFIC OPTIMIZATIONS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The hero video needs extra handling for fast load:
+
+A. PRELOAD HINT — add to <head> of index.html:
+  <link 
+    rel="preload" 
+    as="video" 
+    href="assets/video/hero-bg.[hash].webm"
+    type="video/webm"
+  >
+  This tells the browser to fetch the video immediately 
+  during HTML parse — before it even hits the <video> tag.
+
+B. RANGE REQUEST SUPPORT:
+  Confirm the server supports HTTP Range Requests:
+  Accept-Ranges: bytes
+  This allows video to start playing before fully downloaded.
+  Express static and Nginx both support this natively.
+  Add a check and log a warning if it is missing.
+
+C. PRECONNECT (if any third-party fonts still load):
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" 
+    crossorigin>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. BUILD PIPELINE — FULL WORKFLOW:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Create a single build command: npm run build
+
+It must run these steps in order:
+
+  Step 1 — Hash all assets and copy to /dist
+  Step 2 — Generate manifest.json
+  Step 3 — Rewrite index.html with hashed filenames
+  Step 4 — Copy _headers or vercel.json to /dist root
+  Step 5 — Output build size report showing each file size
+
+package.json scripts block:
+  "scripts": {
+    "build": "node scripts/hash-assets.js",
+    "dev": "node server.js"
+  }
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. FINAL FOLDER STRUCTURE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  /blaze-studio
+    /assets              ← source files (dev only)
+      /video
+      /images
+      /css
+      /js
+    /dist                ← production build (deploy this)
+      /assets
+        /video
+        /images
+        /css
+        /js
+      index.html         ← rewritten with hashed refs
+      manifest.json      ← asset map
+      _headers           ← Netlify cache rules
+      vercel.json        ← Vercel cache rules
+    /scripts
+      hash-assets.js     ← build script
+    server.js            ← Express server (if applicable)
+    package.json
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DELIVERABLE CHECKLIST:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Confirm each item before finishing:
+
+  [ ] hash-assets.js build script created and working
+  [ ] All assets hashed and copied to /dist correctly
+  [ ] manifest.json generated with correct mappings
+  [ ] index.html rewritten with all hashed filenames
+  [ ] Cache-Control headers configured for the platform
+  [ ] immutable header confirmed on all /assets/* routes
+  [ ] no-cache confirmed on index.html
+  [ ] <link rel="preload"> added for hero video WebM
+  [ ] Range request support confirmed on video files
+  [ ] Google Fonts preconnect tags in <head>
+  [ ] npm run build executes all steps cleanly
+  [ ] Build size report printed to console
+  [ ] /dist is the only folder deployed — /assets stays local
+  [ ] Code clean, commented, production-ready
