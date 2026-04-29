@@ -56,6 +56,167 @@ export const CreateContactSubmissionBody = zod.object({
 });
 
 /**
+ * Returns blog posts that are currently visible to the public.
+Includes posts with status `published` whose `publishedAt` is in the past,
+and posts with status `scheduled` whose `scheduledAt` is in the past
+(i.e. they have reached their scheduled publish time).
+
+ * @summary List published blog posts
+ */
+export const listPublicBlogPostsQueryLimitMax = 100;
+
+export const listPublicBlogPostsQueryOffsetMin = 0;
+
+export const ListPublicBlogPostsQueryParams = zod.object({
+  category: zod.coerce.string().optional().describe("Filter by category slug"),
+  q: zod.coerce
+    .string()
+    .optional()
+    .describe("Free-text search across title and excerpt"),
+  limit: zod.coerce
+    .number()
+    .min(1)
+    .max(listPublicBlogPostsQueryLimitMax)
+    .optional(),
+  offset: zod.coerce.number().min(listPublicBlogPostsQueryOffsetMin).optional(),
+});
+
+export const ListPublicBlogPostsResponse = zod.object({
+  posts: zod.array(
+    zod.object({
+      id: zod.number(),
+      title: zod.string(),
+      slug: zod.string(),
+      excerpt: zod.string(),
+      featuredImage: zod.string().nullish(),
+      categorySlug: zod.string().nullish(),
+      categoryName: zod.string().nullish(),
+      tags: zod.array(zod.string()),
+      author: zod.string(),
+      publishedAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+      readingTime: zod.number(),
+    }),
+  ),
+  total: zod.number(),
+  limit: zod.number(),
+  offset: zod.number(),
+});
+
+/**
+ * Returns a single public post by slug, including the previous and next
+post (by publish date) and a list of related posts in the same category.
+Returns 404 if no public post matches the slug.
+
+ * @summary Read a single published blog post by slug
+ */
+export const GetPublicBlogPostParams = zod.object({
+  slug: zod.coerce.string(),
+});
+
+export const GetPublicBlogPostResponse = zod.object({
+  post: zod.object({
+    id: zod.number(),
+    title: zod.string(),
+    slug: zod.string(),
+    excerpt: zod.string(),
+    content: zod.string(),
+    featuredImage: zod.string().nullish(),
+    metaTitle: zod.string(),
+    metaDescription: zod.string(),
+    categorySlug: zod.string().nullish(),
+    categoryName: zod.string().nullish(),
+    tags: zod.array(zod.string()),
+    author: zod.string(),
+    publishedAt: zod.coerce.date(),
+    updatedAt: zod.coerce.date(),
+    readingTime: zod.number(),
+  }),
+  previous: zod
+    .object({
+      id: zod.number(),
+      title: zod.string(),
+      slug: zod.string(),
+      excerpt: zod.string(),
+      featuredImage: zod.string().nullish(),
+      categorySlug: zod.string().nullish(),
+      categoryName: zod.string().nullish(),
+      tags: zod.array(zod.string()),
+      author: zod.string(),
+      publishedAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+      readingTime: zod.number(),
+    })
+    .nullish(),
+  next: zod
+    .object({
+      id: zod.number(),
+      title: zod.string(),
+      slug: zod.string(),
+      excerpt: zod.string(),
+      featuredImage: zod.string().nullish(),
+      categorySlug: zod.string().nullish(),
+      categoryName: zod.string().nullish(),
+      tags: zod.array(zod.string()),
+      author: zod.string(),
+      publishedAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+      readingTime: zod.number(),
+    })
+    .nullish(),
+  related: zod.array(
+    zod.object({
+      id: zod.number(),
+      title: zod.string(),
+      slug: zod.string(),
+      excerpt: zod.string(),
+      featuredImage: zod.string().nullish(),
+      categorySlug: zod.string().nullish(),
+      categoryName: zod.string().nullish(),
+      tags: zod.array(zod.string()),
+      author: zod.string(),
+      publishedAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+      readingTime: zod.number(),
+    }),
+  ),
+});
+
+/**
+ * Returns categories that have at least one publicly-visible post,
+plus the post count for each.
+
+ * @summary List active blog categories
+ */
+export const ListPublicBlogCategoriesResponse = zod.object({
+  categories: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      slug: zod.string(),
+      description: zod.string().nullish(),
+      postCount: zod.number(),
+    }),
+  ),
+});
+
+/**
+ * Returns the slug and last-updated timestamp for every publicly visible
+blog post, suitable for generating a sitemap.xml.
+
+ * @summary Sitemap entries for all public blog posts
+ */
+export const GetPublicBlogSitemapResponse = zod.object({
+  entries: zod.array(
+    zod.object({
+      slug: zod.string(),
+      updatedAt: zod.coerce.date(),
+      publishedAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
  * Authenticates with the admin password and starts a session.
  * @summary Admin login
  */

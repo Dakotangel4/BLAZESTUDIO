@@ -14,6 +14,8 @@ tags:
     description: Contact form submissions
   - name: admin
     description: Admin (password-protected)
+  - name: blog
+    description: Public-facing blog
 paths:
   /healthz:
     get:
@@ -53,6 +55,107 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /blog/posts:
+    get:
+      operationId: listPublicBlogPosts
+      tags: [blog]
+      summary: List published blog posts
+      description: |
+        Returns blog posts that are currently visible to the public.
+        Includes posts with status `published` whose `publishedAt` is in the past,
+        and posts with status `scheduled` whose `scheduledAt` is in the past
+        (i.e. they have reached their scheduled publish time).
+      parameters:
+        - name: category
+          in: query
+          required: false
+          description: Filter by category slug
+          schema:
+            type: string
+        - name: q
+          in: query
+          required: false
+          description: Free-text search across title and excerpt
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: Paginated list of public posts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicBlogPostList"
+  /blog/posts/{slug}:
+    get:
+      operationId: getPublicBlogPost
+      tags: [blog]
+      summary: Read a single published blog post by slug
+      description: |
+        Returns a single public post by slug, including the previous and next
+        post (by publish date) and a list of related posts in the same category.
+        Returns 404 if no public post matches the slug.
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The public post envelope
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicBlogPostDetail"
+        "404":
+          description: Not found or not yet published
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /blog/categories:
+    get:
+      operationId: listPublicBlogCategories
+      tags: [blog]
+      summary: List active blog categories
+      description: |
+        Returns categories that have at least one publicly-visible post,
+        plus the post count for each.
+      responses:
+        "200":
+          description: Public categories
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicBlogCategoryList"
+  /blog/sitemap:
+    get:
+      operationId: getPublicBlogSitemap
+      tags: [blog]
+      summary: Sitemap entries for all public blog posts
+      description: |
+        Returns the slug and last-updated timestamp for every publicly visible
+        blog post, suitable for generating a sitemap.xml.
+      responses:
+        "200":
+          description: Sitemap entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicBlogSitemap"
   /admin/login:
     post:
       operationId: adminLogin
@@ -763,6 +866,191 @@ components:
       required:
         - affected
         - action
+    PublicBlogCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        postCount:
+          type: integer
+      required:
+        - id
+        - name
+        - slug
+        - postCount
+    PublicBlogCategoryList:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicBlogCategory"
+      required:
+        - categories
+    PublicBlogPostSummary:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: string
+        featuredImage:
+          type: string
+          nullable: true
+        categorySlug:
+          type: string
+          nullable: true
+        categoryName:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        author:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        readingTime:
+          type: integer
+      required:
+        - id
+        - title
+        - slug
+        - excerpt
+        - tags
+        - author
+        - publishedAt
+        - updatedAt
+        - readingTime
+    PublicBlogPost:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: string
+        content:
+          type: string
+        featuredImage:
+          type: string
+          nullable: true
+        metaTitle:
+          type: string
+        metaDescription:
+          type: string
+        categorySlug:
+          type: string
+          nullable: true
+        categoryName:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        author:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        readingTime:
+          type: integer
+      required:
+        - id
+        - title
+        - slug
+        - excerpt
+        - content
+        - metaTitle
+        - metaDescription
+        - tags
+        - author
+        - publishedAt
+        - updatedAt
+        - readingTime
+    PublicBlogPostList:
+      type: object
+      properties:
+        posts:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicBlogPostSummary"
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+      required:
+        - posts
+        - total
+        - limit
+        - offset
+    PublicBlogPostDetail:
+      type: object
+      properties:
+        post:
+          $ref: "#/components/schemas/PublicBlogPost"
+        previous:
+          $ref: "#/components/schemas/PublicBlogPostSummary"
+          nullable: true
+        next:
+          $ref: "#/components/schemas/PublicBlogPostSummary"
+          nullable: true
+        related:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicBlogPostSummary"
+      required:
+        - post
+        - related
+    PublicBlogSitemapEntry:
+      type: object
+      properties:
+        slug:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        publishedAt:
+          type: string
+          format: date-time
+      required:
+        - slug
+        - updatedAt
+        - publishedAt
+    PublicBlogSitemap:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicBlogSitemapEntry"
+      required:
+        - entries
     ErrorResponse:
       type: object
       properties:

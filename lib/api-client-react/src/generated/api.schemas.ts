@@ -199,7 +199,96 @@ export interface AdminBlogBulkResult {
   action: string;
 }
 
+export interface PublicBlogCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  postCount: number;
+}
+
+export interface PublicBlogCategoryList {
+  categories: PublicBlogCategory[];
+}
+
+export interface PublicBlogPostSummary {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  featuredImage?: string | null;
+  categorySlug?: string | null;
+  categoryName?: string | null;
+  tags: string[];
+  author: string;
+  publishedAt: string;
+  updatedAt: string;
+  readingTime: number;
+}
+
+export interface PublicBlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  featuredImage?: string | null;
+  metaTitle: string;
+  metaDescription: string;
+  categorySlug?: string | null;
+  categoryName?: string | null;
+  tags: string[];
+  author: string;
+  publishedAt: string;
+  updatedAt: string;
+  readingTime: number;
+}
+
+export interface PublicBlogPostList {
+  posts: PublicBlogPostSummary[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface PublicBlogPostDetail {
+  post: PublicBlogPost;
+  previous?: PublicBlogPostSummary | null;
+  next?: PublicBlogPostSummary | null;
+  related: PublicBlogPostSummary[];
+}
+
+export interface PublicBlogSitemapEntry {
+  slug: string;
+  updatedAt: string;
+  publishedAt: string;
+}
+
+export interface PublicBlogSitemap {
+  entries: PublicBlogSitemapEntry[];
+}
+
 export interface ErrorResponse {
   error: string;
   details?: string[];
 }
+
+export type ListPublicBlogPostsParams = {
+  /**
+   * Filter by category slug
+   */
+  category?: string;
+  /**
+   * Free-text search across title and excerpt
+   */
+  q?: string;
+  /**
+   * @minimum 1
+   * @maximum 100
+   */
+  limit?: number;
+  /**
+   * @minimum 0
+   */
+  offset?: number;
+};

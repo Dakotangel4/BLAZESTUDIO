@@ -1,377 +1,324 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link, useRoute } from "wouter";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
-  Clock,
   Calendar,
-  Sparkles,
+  Clock,
   ChevronRight,
-  Tag as TagIcon,
-  BookOpen,
-  Users,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import SiteLayout from "@/components/layout/site-layout";
 import NotFound from "@/pages/not-found";
-import { Button } from "@/components/ui/button";
 import {
-  POSTS,
-  categoryFromSlug,
-  categoryMeta,
-  categorySlug,
-  categoryColor,
-  getPostsByCategory,
-  type Category,
-  type Post,
-} from "@/lib/posts";
+  useListPublicBlogPosts,
+  useListPublicBlogCategories,
+} from "@workspace/api-client-react";
+import type { PublicBlogPostSummary } from "@workspace/api-client-react";
+import {
+  categoryVisualFor,
+  formatPostDateShort,
+  absoluteUrl,
+  gradientCssFor,
+} from "@/lib/blog-helpers";
+import { useSeo } from "@/lib/use-seo";
 
-function ArticleCard({ post, index }: { post: Post; index: number }) {
+const PAGE_SIZE = 9;
+
+function PostCardSkeleton() {
   return (
-    <Link href={`/blog/${post.slug}`}>
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.3) }}
-        className="group h-full flex flex-col rounded-2xl overflow-hidden border bg-background hover:shadow-xl hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-      >
-        <div
-          className={`relative aspect-[16/10] bg-gradient-to-br ${post.gradient} overflow-hidden`}
-        >
-          <div className="absolute inset-0" style={{ backgroundImage: post.pattern }} aria-hidden />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-15 mix-blend-overlay" />
-          <div className="absolute top-4 left-4">
-            <span
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider border backdrop-blur-sm bg-white/90 ${categoryColor[post.category]}`}
-            >
-              <TagIcon className="w-3 h-3" />
-              {post.category.toUpperCase()}
-            </span>
-          </div>
-          <div className="absolute bottom-4 right-4 text-white/30 text-5xl font-black tabular-nums leading-none">
-            {String(index + 1).padStart(2, "0")}
-          </div>
-        </div>
-
-        <div className="p-6 flex-1 flex flex-col">
-          <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3 h-3" />
-              {post.date}
-            </span>
-            <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-            <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {post.readTime}
-            </span>
-          </div>
-
-          <h3 className="text-lg font-bold leading-snug text-foreground group-hover:text-primary transition-colors mb-2 line-clamp-2">
-            {post.title}
-          </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3 mb-5">
-            {post.excerpt}
-          </p>
-
-          <div className="mt-auto pt-4 border-t flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div
-                className={`w-8 h-8 shrink-0 rounded-full ${post.authorColor} flex items-center justify-center text-xs font-bold`}
-              >
-                {post.authorInitials}
-              </div>
-              <span className="text-xs font-semibold text-foreground/80 truncate">
-                {post.author}
-              </span>
-            </div>
-            <ArrowRight className="w-4 h-4 text-primary opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0" />
-          </div>
-        </div>
-      </motion.div>
-    </Link>
+    <div className="rounded-3xl border bg-card overflow-hidden">
+      <Skeleton className="h-48 w-full" />
+      <div className="p-6 space-y-3">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </div>
+    </div>
   );
 }
 
-function OtherTopicCard({ category }: { category: Category }) {
-  const meta = categoryMeta[category];
-  const slug = categorySlug[category];
-  const count = getPostsByCategory(category).length;
+function PostCard({ post, index }: { post: PublicBlogPostSummary; index: number }) {
+  const visual = categoryVisualFor(post.categorySlug, index);
   return (
-    <Link
-      href={`/blog/category/${slug}`}
-      className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${meta.gradient} text-white p-5 sm:p-6 min-h-[160px] flex flex-col justify-between hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+    <motion.article
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: Math.min(index, 5) * 0.04 }}
+      className="group rounded-3xl border bg-card overflow-hidden hover:shadow-lg hover:border-primary/40 transition-all flex flex-col"
+      data-testid={`post-card-${post.slug}`}
     >
-      <div className="absolute inset-0" style={{ backgroundImage: meta.pattern }} aria-hidden />
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-15 mix-blend-overlay" />
-      <div className="absolute -right-2 -bottom-3 text-[6rem] font-black opacity-15 leading-[0.85] tabular-nums tracking-[-0.04em] pointer-events-none">
-        {meta.number}
-      </div>
-      <div className="relative">
-        <div className="text-[10px] font-bold tracking-[0.2em] uppercase opacity-80 mb-1.5">
-          {meta.tagline}
+      <Link href={`/blog/${post.slug}`} className="relative block h-48 overflow-hidden">
+        {post.featuredImage ? (
+          <img
+            src={post.featuredImage}
+            alt={post.title}
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `${visual.pattern}, ${gradientCssFor(post.categorySlug)}`,
+            }}
+          >
+            <div className="absolute bottom-3 right-4 text-white/40 font-extrabold text-5xl tracking-tighter">
+              {visual.number}
+            </div>
+          </div>
+        )}
+      </Link>
+      <div className="p-6 flex-1 flex flex-col">
+        <h3 className="text-lg sm:text-xl font-bold text-foreground leading-snug mb-2.5 line-clamp-2">
+          <Link
+            href={`/blog/${post.slug}`}
+            className="hover:text-primary transition-colors"
+          >
+            {post.title}
+          </Link>
+        </h3>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-5 line-clamp-3 flex-1">
+          {post.excerpt}
+        </p>
+        <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-4">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5" />
+            {formatPostDateShort(post.publishedAt)}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5" />
+            {post.readingTime} min
+          </span>
         </div>
-        <div className="text-lg sm:text-xl font-extrabold tracking-tight leading-tight">
-          {category}
-        </div>
       </div>
-      <div className="relative flex items-center justify-between text-xs font-semibold">
-        <span className="opacity-80">
-          {count} article{count === 1 ? "" : "s"}
-        </span>
-        <span className="inline-flex items-center gap-1 group-hover:gap-2 transition-all">
-          Browse
-          <ArrowRight className="w-3.5 h-3.5" />
-        </span>
-      </div>
-    </Link>
+    </motion.article>
   );
 }
 
 export default function BlogCategoryPage() {
-  const [, params] = useRoute("/blog/category/:slug");
-  const slug = params?.slug ?? "";
-  const category: Category | undefined = categoryFromSlug[slug];
+  const [match, params] = useRoute<{ slug: string }>("/blog/category/:slug");
+  const slug = match ? params.slug : "";
+  const [page, setPage] = useState(0);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
-  }, [slug]);
+  useEffect(() => setPage(0), [slug]);
 
-  const posts = useMemo(
-    () => (category ? getPostsByCategory(category) : []),
-    [category],
+  const categoriesQuery = useListPublicBlogCategories({
+    query: { staleTime: 60_000 } as never,
+  });
+
+  const postsQuery = useListPublicBlogPosts(
+    { category: slug, limit: PAGE_SIZE, offset: page * PAGE_SIZE },
+    {
+      query: {
+        enabled: Boolean(slug),
+        staleTime: 30_000,
+        placeholderData: (prev: unknown) => prev,
+      } as never,
+    },
   );
-  const otherCategories = useMemo<Category[]>(
-    () =>
-      (Object.keys(categoryMeta) as Category[]).filter((c) => c !== category),
-    [category],
-  );
-  const contributors = useMemo(
-    () => (category ? new Set(posts.map((p) => p.author)).size : 0),
-    [category, posts],
-  );
 
-  if (!category) return <NotFound />;
+  const category = categoriesQuery.data?.categories.find((c) => c.slug === slug);
+  const visual = categoryVisualFor(slug);
+  const posts = postsQuery.data?.posts ?? [];
+  const total = postsQuery.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  const meta = categoryMeta[category];
+  // The category may exist in the DB but have no published posts yet — still
+  // show the page header rather than a 404 in that case.
+  const categoryName = category?.name ?? null;
+
+  useSeo({
+    title: categoryName ? `${categoryName} — Blog` : "Blog category",
+    description:
+      category?.description ??
+      `Posts on ${categoryName ?? slug} from the Blaze Studio team.`,
+    canonical: absoluteUrl(`/blog/category/${slug}`),
+    type: "website",
+    jsonLd: categoryName
+      ? {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: `${categoryName} — Blaze Studio`,
+          url: absoluteUrl(`/blog/category/${slug}`),
+          description:
+            category?.description ??
+            `Posts on ${categoryName} from the Blaze Studio team.`,
+        }
+      : undefined,
+    defaults: { title: "Blaze Studio" },
+  });
+
+  // If categories list has loaded and our slug isn't in it AND we have no
+  // posts under it, the category genuinely doesn't exist.
+  const categoryConfirmedMissing =
+    !categoriesQuery.isLoading &&
+    !category &&
+    !postsQuery.isLoading &&
+    posts.length === 0 &&
+    total === 0;
+
+  if (categoryConfirmedMissing) {
+    return <NotFound />;
+  }
 
   return (
     <SiteLayout>
       <div className="pt-24">
-        {/* Editorial hero band */}
-        <section
-          className={`relative overflow-hidden bg-gradient-to-br ${meta.gradient} text-white`}
-        >
-          <div className="absolute inset-0" style={{ backgroundImage: meta.pattern }} aria-hidden />
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay" />
-          <svg
-            className="absolute inset-0 w-full h-full opacity-[0.18] mix-blend-overlay"
-            aria-hidden
-          >
-            <defs>
-              <pattern
-                id={`cat-grid-${slug}`}
-                width="48"
-                height="48"
-                patternUnits="userSpaceOnUse"
-              >
-                <path d="M 48 0 L 0 0 0 48" fill="none" stroke="white" strokeWidth="0.6" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill={`url(#cat-grid-${slug})`} />
-          </svg>
-          <div className="absolute -top-24 -right-12 w-[28rem] h-[28rem] bg-white/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-32 -left-20 w-[24rem] h-[24rem] bg-white/5 rounded-full blur-3xl pointer-events-none" />
+        {/* Hero */}
+        <section className="relative isolate overflow-hidden">
+          <div
+            className="absolute inset-0 -z-10 opacity-95"
+            style={{
+              backgroundImage: `${visual.pattern}, ${gradientCssFor(slug)}`,
+            }}
+          />
+          <div className="absolute inset-0 -z-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.04]" />
 
-          <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 relative">
-            {/* Breadcrumb */}
+          <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-20 md:py-24 text-white">
             <nav
               aria-label="Breadcrumb"
-              className="flex items-center gap-1.5 text-xs sm:text-sm text-white/80 mb-7 sm:mb-8"
+              className="flex items-center gap-1.5 text-sm text-white/80 mb-6"
+              data-testid="breadcrumb"
             >
-              <Link href="/" className="hover:text-white transition-colors">
-                Home
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-              <Link href="/blog" className="hover:text-white transition-colors">
-                Blog
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-              <span className="text-white font-medium">Topics</span>
-              <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-              <span className="text-white font-medium truncate">{category}</span>
+              <Link href="/" className="hover:text-white">Home</Link>
+              <ChevronRight className="w-3.5 h-3.5" />
+              <Link href="/blog" className="hover:text-white">Blog</Link>
+              <ChevronRight className="w-3.5 h-3.5" />
+              <span className="text-white">{categoryName ?? slug}</span>
             </nav>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-end">
-              <div className="md:col-span-8">
-                <motion.div
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <div className="flex flex-wrap items-center gap-2.5 mb-5">
-                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 text-foreground font-bold text-[10px] sm:text-[11px] tracking-[0.2em] uppercase">
-                      <Sparkles className="w-3 h-3 text-primary" />
-                      Topic Nº {meta.number}
-                    </span>
-                    <span className="hidden sm:inline-flex items-center gap-2 text-[11px] font-semibold tracking-[0.18em] text-white/85 uppercase">
-                      <span className="w-6 h-px bg-white/40" />
-                      {meta.tagline}
-                    </span>
-                  </div>
-
-                  <h1 className="text-[clamp(2.25rem,7.5vw,4.5rem)] font-extrabold tracking-[-0.025em] leading-[1.04] mb-5 text-balance break-words">
-                    {category}
-                  </h1>
-                  <p className="text-base sm:text-lg md:text-xl text-white/85 leading-relaxed max-w-2xl">
-                    {meta.description}
-                  </p>
-
-                  {/* Meta strip */}
-                  <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3 pt-5 border-t border-white/20">
-                    <div className="flex items-center gap-2 text-sm">
-                      <BookOpen className="w-4 h-4" />
-                      <span className="font-bold tabular-nums">{posts.length}</span>
-                      <span className="text-white/80">
-                        article{posts.length === 1 ? "" : "s"} in this topic
-                      </span>
-                    </div>
-                    {contributors > 0 && (
-                      <>
-                        <span className="hidden sm:inline w-1 h-1 rounded-full bg-white/40" />
-                        <div className="flex items-center gap-2 text-sm">
-                          <Users className="w-4 h-4" />
-                          <span className="font-bold tabular-nums">
-                            {contributors}
-                          </span>
-                          <span className="text-white/80">
-                            contributor{contributors === 1 ? "" : "s"}
-                          </span>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Giant editorial number */}
-              <div className="hidden md:flex md:col-span-4 justify-end items-end">
-                <div className="text-[14rem] lg:text-[16rem] font-black opacity-25 leading-[0.85] tabular-nums tracking-[-0.05em]">
-                  {meta.number}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Articles in this topic */}
-        <section className="py-14 sm:py-20">
-          <div className="container mx-auto px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 sm:mb-10">
-              <div>
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-3">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  In this topic
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="max-w-3xl"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <span className="font-extrabold text-white/70 tracking-[-0.02em] text-3xl tabular-nums">
+                  {visual.number}
                 </span>
-                <h2 className="text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold tracking-[-0.02em] text-foreground leading-tight">
-                  All {category} articles
-                </h2>
+                <span className="h-px flex-1 bg-white/30 max-w-[8rem]" />
+                <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-white/80">
+                  {visual.tagline}
+                </span>
               </div>
-              <Link
-                href="/blog"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-primary transition-colors"
+              <h1
+                className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.025em] leading-[1.05] mb-5"
+                data-testid="category-title"
               >
-                <ArrowLeft className="w-4 h-4" />
-                Back to all articles
-              </Link>
-            </div>
-
-            {posts.length === 0 ? (
-              <div className="text-center py-16 sm:py-20 rounded-3xl border border-dashed bg-secondary/30">
-                <div className="inline-flex w-14 h-14 items-center justify-center rounded-2xl bg-background border mb-4">
-                  <BookOpen className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <h3 className="text-xl font-bold mb-2">
-                  No articles in this topic yet
-                </h3>
-                <p className="text-muted-foreground mb-6">
-                  Subscribe to be the first to read what we publish here.
-                </p>
-                <Link href="/blog">
-                  <Button variant="outline">Browse all articles</Button>
-                </Link>
+                {categoryName ?? slug}
+              </h1>
+              <p className="text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl">
+                {category?.description ?? visual.description}
+              </p>
+              <div className="mt-7 flex flex-wrap items-center gap-3">
+                <Button asChild variant="secondary" size="lg" data-testid="back-to-blog">
+                  <Link href="/blog">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    All posts
+                  </Link>
+                </Button>
+                <span className="text-sm text-white/80">
+                  {total} {total === 1 ? "post" : "posts"}
+                </span>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
-                {posts.map((post, i) => (
-                  <ArticleCard key={post.slug} post={post} index={i} />
-                ))}
-              </div>
-            )}
+            </motion.div>
           </div>
         </section>
 
-        {/* Other topics */}
-        <section className="py-14 sm:py-20 bg-secondary/30 border-y">
-          <div className="container mx-auto px-4 sm:px-6">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 sm:mb-10">
-              <div>
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-3">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  Other topics
-                </span>
-                <h2 className="text-[clamp(1.5rem,4vw,2.25rem)] font-extrabold tracking-[-0.02em] text-foreground leading-tight">
-                  Explore the rest of Blaze Insights
-                </h2>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {otherCategories.map((c) => (
-                <OtherTopicCard key={c} category={c} />
+        {/* Grid */}
+        <section className="container mx-auto px-4 sm:px-6 py-14 sm:py-16">
+          {postsQuery.isLoading ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <PostCardSkeleton key={i} />
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="bg-foreground text-background py-16 sm:py-20 lg:py-24 relative overflow-hidden">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary rounded-full blur-[140px] opacity-25 pointer-events-none" />
-          <div className="container mx-auto px-4 sm:px-6 relative z-10">
-            <div className="max-w-2xl mx-auto text-center">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/15 border border-primary/30 text-primary font-semibold text-[11px] sm:text-xs tracking-widest uppercase mb-5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                Free Audit
-              </span>
-              <h2 className="text-[clamp(1.875rem,5vw,2.75rem)] font-extrabold tracking-[-0.02em] leading-[1.15] mb-4">
-                Want this working on your site?
-              </h2>
-              <p className="text-base sm:text-lg text-white/70 mb-8 leading-relaxed">
-                Book a free 30-minute audit. We'll look at your site, your funnel,
-                and tell you which two or three integrations would pay back fastest.
+          ) : posts.length === 0 ? (
+            <div
+              className="text-center py-16 sm:py-20 border-2 border-dashed border-border rounded-3xl"
+              data-testid="empty-state"
+            >
+              <h3 className="text-xl font-bold text-foreground mb-2">
+                No posts in this category yet
+              </h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                We're working on it — meanwhile, browse the rest of the blog.
               </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/contact">
-                  <Button
-                    size="lg"
-                    className="w-full sm:w-auto h-12 sm:h-14 px-7 sm:px-8 text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 group"
-                  >
-                    Get My Free Audit
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
+              <Button asChild className="mt-5">
+                <Link href="/blog">
+                  Browse all posts
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
-                <Link href="/services">
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div
+                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                data-testid="post-grid"
+              >
+                {posts.map((post, i) => (
+                  <PostCard key={post.id} post={post} index={i} />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div
+                  className="mt-12 flex items-center justify-center gap-2"
+                  data-testid="pagination"
+                >
                   <Button
                     variant="outline"
-                    size="lg"
-                    className="w-full sm:w-auto h-12 sm:h-14 px-7 sm:px-8 text-base font-bold bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white"
+                    size="sm"
+                    disabled={page === 0}
+                    onClick={() => {
+                      setPage((p) => Math.max(0, p - 1));
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    data-testid="page-prev"
                   >
-                    See our services
+                    Previous
                   </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => {
+                          setPage(i);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                        data-testid={`page-${i + 1}`}
+                        className={`min-w-[2.25rem] h-9 px-2 rounded-md text-sm font-semibold border transition-colors ${
+                          page === i
+                            ? "bg-foreground text-background border-foreground"
+                            : "bg-card text-foreground border-border hover:border-primary/40"
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page >= totalPages - 1}
+                    onClick={() => {
+                      setPage((p) => Math.min(totalPages - 1, p + 1));
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    data-testid="page-next"
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </section>
       </div>
     </SiteLayout>

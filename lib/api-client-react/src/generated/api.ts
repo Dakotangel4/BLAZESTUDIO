@@ -35,6 +35,11 @@ import type {
   ContactSubmissionResult,
   ErrorResponse,
   HealthStatus,
+  ListPublicBlogPostsParams,
+  PublicBlogCategoryList,
+  PublicBlogPostDetail,
+  PublicBlogPostList,
+  PublicBlogSitemap,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -209,6 +214,359 @@ export const useCreateContactSubmission = <
 > => {
   return useMutation(getCreateContactSubmissionMutationOptions(options));
 };
+
+/**
+ * Returns blog posts that are currently visible to the public.
+Includes posts with status `published` whose `publishedAt` is in the past,
+and posts with status `scheduled` whose `scheduledAt` is in the past
+(i.e. they have reached their scheduled publish time).
+
+ * @summary List published blog posts
+ */
+export const getListPublicBlogPostsUrl = (
+  params?: ListPublicBlogPostsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/blog/posts?${stringifiedParams}`
+    : `/api/blog/posts`;
+};
+
+export const listPublicBlogPosts = async (
+  params?: ListPublicBlogPostsParams,
+  options?: RequestInit,
+): Promise<PublicBlogPostList> => {
+  return customFetch<PublicBlogPostList>(getListPublicBlogPostsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListPublicBlogPostsQueryKey = (
+  params?: ListPublicBlogPostsParams,
+) => {
+  return [`/api/blog/posts`, ...(params ? [params] : [])] as const;
+};
+
+export const getListPublicBlogPostsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listPublicBlogPosts>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPublicBlogPostsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPublicBlogPosts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListPublicBlogPostsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listPublicBlogPosts>>
+  > = ({ signal }) =>
+    listPublicBlogPosts(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listPublicBlogPosts>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListPublicBlogPostsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listPublicBlogPosts>>
+>;
+export type ListPublicBlogPostsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List published blog posts
+ */
+
+export function useListPublicBlogPosts<
+  TData = Awaited<ReturnType<typeof listPublicBlogPosts>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListPublicBlogPostsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listPublicBlogPosts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListPublicBlogPostsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Returns a single public post by slug, including the previous and next
+post (by publish date) and a list of related posts in the same category.
+Returns 404 if no public post matches the slug.
+
+ * @summary Read a single published blog post by slug
+ */
+export const getGetPublicBlogPostUrl = (slug: string) => {
+  return `/api/blog/posts/${slug}`;
+};
+
+export const getPublicBlogPost = async (
+  slug: string,
+  options?: RequestInit,
+): Promise<PublicBlogPostDetail> => {
+  return customFetch<PublicBlogPostDetail>(getGetPublicBlogPostUrl(slug), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPublicBlogPostQueryKey = (slug: string) => {
+  return [`/api/blog/posts/${slug}`] as const;
+};
+
+export const getGetPublicBlogPostQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicBlogPost>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPublicBlogPost>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPublicBlogPostQueryKey(slug);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicBlogPost>>
+  > = ({ signal }) => getPublicBlogPost(slug, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!slug,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicBlogPost>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetPublicBlogPostQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicBlogPost>>
+>;
+export type GetPublicBlogPostQueryError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Read a single published blog post by slug
+ */
+
+export function useGetPublicBlogPost<
+  TData = Awaited<ReturnType<typeof getPublicBlogPost>>,
+  TError = ErrorType<ErrorResponse>,
+>(
+  slug: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getPublicBlogPost>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetPublicBlogPostQueryOptions(slug, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Returns categories that have at least one publicly-visible post,
+plus the post count for each.
+
+ * @summary List active blog categories
+ */
+export const getListPublicBlogCategoriesUrl = () => {
+  return `/api/blog/categories`;
+};
+
+export const listPublicBlogCategories = async (
+  options?: RequestInit,
+): Promise<PublicBlogCategoryList> => {
+  return customFetch<PublicBlogCategoryList>(getListPublicBlogCategoriesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListPublicBlogCategoriesQueryKey = () => {
+  return [`/api/blog/categories`] as const;
+};
+
+export const getListPublicBlogCategoriesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listPublicBlogCategories>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listPublicBlogCategories>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListPublicBlogCategoriesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listPublicBlogCategories>>
+  > = ({ signal }) => listPublicBlogCategories({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listPublicBlogCategories>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListPublicBlogCategoriesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listPublicBlogCategories>>
+>;
+export type ListPublicBlogCategoriesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List active blog categories
+ */
+
+export function useListPublicBlogCategories<
+  TData = Awaited<ReturnType<typeof listPublicBlogCategories>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listPublicBlogCategories>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListPublicBlogCategoriesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Returns the slug and last-updated timestamp for every publicly visible
+blog post, suitable for generating a sitemap.xml.
+
+ * @summary Sitemap entries for all public blog posts
+ */
+export const getGetPublicBlogSitemapUrl = () => {
+  return `/api/blog/sitemap`;
+};
+
+export const getPublicBlogSitemap = async (
+  options?: RequestInit,
+): Promise<PublicBlogSitemap> => {
+  return customFetch<PublicBlogSitemap>(getGetPublicBlogSitemapUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPublicBlogSitemapQueryKey = () => {
+  return [`/api/blog/sitemap`] as const;
+};
+
+export const getGetPublicBlogSitemapQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPublicBlogSitemap>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicBlogSitemap>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPublicBlogSitemapQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getPublicBlogSitemap>>
+  > = ({ signal }) => getPublicBlogSitemap({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicBlogSitemap>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetPublicBlogSitemapQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPublicBlogSitemap>>
+>;
+export type GetPublicBlogSitemapQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Sitemap entries for all public blog posts
+ */
+
+export function useGetPublicBlogSitemap<
+  TData = Awaited<ReturnType<typeof getPublicBlogSitemap>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getPublicBlogSitemap>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetPublicBlogSitemapQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * Authenticates with the admin password and starts a session.

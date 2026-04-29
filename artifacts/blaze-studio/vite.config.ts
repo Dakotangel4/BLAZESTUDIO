@@ -71,6 +71,10 @@ export default defineConfig({
         target: process.env.API_SERVER_URL || "http://localhost:8000",
         changeOrigin: true,
       },
+      "/sitemap.xml": {
+        target: process.env.API_SERVER_URL || "http://localhost:8000",
+        changeOrigin: true,
+      },
     },
   },
   preview: {

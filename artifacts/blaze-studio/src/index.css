@@ -2,6 +2,15 @@
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
+/*
+ * Blog category visuals build Tailwind classes from data (e.g. category
+ * gradient strings live in `lib/blog-helpers.ts`). When those classes are
+ * composed at runtime, Tailwind's static scanner can't always see them, so
+ * we explicitly safelist every gradient stop we use in the helper.
+ */
+@source inline("{from,via,to}-{primary,pink,rose,red,orange,amber,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,lime}-{500,600,700}");
+@source inline("{bg,text,border}-{primary,pink,rose,red,orange,amber,emerald,teal,cyan,sky,blue,indigo,violet,purple,fuchsia,lime}-{500,600,700}/{5,10,15,20,30,40}");
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
