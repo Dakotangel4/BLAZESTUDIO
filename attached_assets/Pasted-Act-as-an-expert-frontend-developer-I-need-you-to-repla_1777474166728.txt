@@ -1,0 +1,140 @@
+Act as an expert frontend developer.
+
+I need you to replace my current homepage hero section with a modern, 
+responsive full-screen hero section featuring an animated video background.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TECH STACK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Semantic HTML5 only
+- Clean, modern CSS3 — no frameworks, no libraries
+- Vanilla JavaScript for the canvas particle layer
+- Single self-contained index.html file
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BUSINESS CONTEXT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+The site is for Blaze Studio — a creative agency offering web development, 
+app development, and digital marketing. The brand name "Blaze" should 
+drive the entire visual language: controlled fire, heat, ignition, 
+energy, momentum. This is a premium creative studio, not a cheap 
+freelancer site.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. VIDEO INTEGRATION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Embed an HTML5 <video> tag as the hero background
+- It must cover the entire viewport using object-fit: cover and 
+  remain perfectly centered regardless of screen size
+- Position it absolutely behind all content layers
+- The video must include ALL of these attributes:
+  autoplay, loop, muted, playsinline
+  This ensures it plays automatically and correctly on iOS and 
+  Android without requiring user interaction
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. CANVAS ANIMATION LAYER (on top of video):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Layer a fullscreen <canvas> animation over the video to reinforce 
+the Blaze brand feel:
+
+- Animated ember particles rising slowly from the bottom —
+  small glowing dots in deep orange (#FF4500), amber (#FFA500),
+  and occasional electric white (#FFFFFF) that fade as they rise
+- Behind the particles, a slow-moving radial heat glow pulsing 
+  from lower-center, breathing in and out every 4–6 seconds
+- Particles must vary in: size (1px–4px), speed, opacity, drift angle
+- Particle count: 120 on desktop, 60 on mobile (below 768px)
+- Canvas must resize on window resize (debounced, 150ms)
+- Use requestAnimationFrame only — no setInterval
+- Initialize canvas on DOMContentLoaded to prevent flash
+- Canvas z-index must sit between the video and the dark overlay
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. OVERLAY LAYER (text readability):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Add a semi-transparent dark overlay: rgba(0, 0, 0, 0.45)
+- It must sit directly above the canvas, below all text content
+- This is non-negotiable — ensures the headline stays readable 
+  regardless of how bright the video or animation gets
+
+Layer stacking order (bottom to top):
+  [1] <video> — background
+  [2] <canvas> — ember particle animation
+  [3] <div> overlay — rgba(0,0,0,0.45)
+  [4] Hero content — headline, subheadline, CTAs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. HERO CONTENT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Center a clean content wrapper above all layers containing:
+
+  - Eyebrow tag: "WEB • APP • DIGITAL MARKETING"
+  - <h1> Headline: "We Build Things That Burn Bright"
+  - <p> Subheadline: "Blaze Studio crafts high-performance websites, 
+    apps, and marketing systems for brands that refuse to be ignored."
+  - Primary CTA button: "Start a Project"
+  - Secondary CTA (text link): "See Our Work →"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. TYPOGRAPHY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Load from Google Fonts:
+  - Headline font: "Bebas Neue" or "Anton" — bold, tall, impactful
+  - Body font: "DM Sans" or "Outfit" — clean and modern
+
+  - Headline: 80px desktop / 44px mobile, white, letter-spacing: 2px
+  - Eyebrow: 11px, uppercase, wide tracking, orange (#FFA500), 
+    styled as a label or subtle pill
+  - Subheadline: 18px, light gray (#CCCCCC), max-width 560px, centered
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. CTA BUTTON:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"Start a Project" button:
+  - Background: #FF4500 → #FFA500 gradient (left to right)
+  - Text: white, bold, 14px uppercase
+  - Padding: 16px 36px
+  - Border-radius: 4px — sharp, not pill-shaped
+  - Hover: brightness up, scale(1.03), orange glow box-shadow
+  - Transition: 0.3s ease
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. LOAD ANIMATIONS (CSS staggered):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+On page load, fade + slide up each element in order:
+  1. Eyebrow tag — delay 0.2s
+  2. Headline — delay 0.4s
+  3. Subheadline — delay 0.6s
+  4. Buttons — delay 0.8s
+Animation: opacity 0→1 + translateY(20px)→translateY(0), 
+0.7s ease-out per element
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+8. PERFORMANCE & FALLBACKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- Include a static fallback background-image in CSS on the hero section
+- This image must display while the video loads OR if the browser 
+  blocks autoplay entirely
+- The fallback must match the dark, fiery Blaze brand aesthetic
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+9. ACCESSIBILITY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Implement a @media (prefers-reduced-motion: reduce) query:
+  - If the user has reduced motion enabled on their device, 
+    hide BOTH the <video> and <canvas> elements entirely
+  - Display the static fallback image instead
+  - All content and CTAs must remain fully visible and functional
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+HARD RULES — DO NOT BREAK THESE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- No purple gradients
+- No glassmorphism or frosted cards
+- No floating blobs or soft pastel shapes
+- No generic SaaS template layouts
+- No external video or image files embedded by URL
+- Code must be clean, well-commented, production-ready
+- Hero section height: 100vh minimum
+- Fully responsive across mobile, tablet, and desktop
