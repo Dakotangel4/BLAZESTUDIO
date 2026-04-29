@@ -1,0 +1,212 @@
+Act as an expert frontend developer and DevOps engineer.
+
+The Blaze Studio site is fully built with a self-hosted video 
+hero, canvas animation, hashed asset pipeline, and long-cache 
+strategy. Now I need you to configure the .replit file and 
+production server so that clicking Deploy on Replit runs the 
+full build and serves the optimized /dist folder — not the 
+raw dev source files.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OBJECTIVE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Wire up Replit's one-click Deploy button so it:
+
+  1. Runs the full asset build (hash + manifest + rewrite)
+  2. Starts Express in production mode — not dev mode
+  3. Serves ONLY the /dist folder to the public
+  4. Enables gzip compression on all responses
+  5. Applies all long-cache headers correctly in production
+  6. Never exposes /assets (raw source) to the public
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. CONFIGURE THE .replit FILE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Create or update the .replit file in the project root 
+with the following configuration:
+
+  [deployment]
+  deploymentTarget = "cloudrun"
+  build = ["sh", "-c", "pnpm install && pnpm -r build"]
+  run = ["sh", "-c", "NODE_ENV=production node server.js"]
+
+  [run]
+  command = "node server.js"
+
+  [[ports]]
+  localPort = 3000
+  externalPort = 80
+
+Explanation of each line:
+  - build: installs dependencies then runs the full 
+    asset hash + manifest + dist build before deploy
+  - run: starts Express with NODE_ENV=production — 
+    this is the command Replit executes after build
+  - ports: maps your local Express port 3000 to 
+    the public-facing port 80 on Replit's network
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. UPDATE server.js FOR PRODUCTION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Rewrite server.js to behave differently based on 
+NODE_ENV so dev and production are cleanly separated:
+
+  const express = require('express');
+  const path = require('path');
+  const compression = require('compression');
+
+  const app = express();
+  const PORT = process.env.PORT || 3000;
+  const isProd = process.env.NODE_ENV === 'production';
+
+  // GZIP compress all responses in production
+  if (isProd) {
+    app.use(compression());
+  }
+
+  // Serve hashed static assets with 1-year cache
+  // Only in production — dev serves raw /assets
+  if (isProd) {
+    app.use('/assets', express.static(
+      path.join(__dirname, 'dist/assets'), {
+        maxAge: '1y',
+        immutable: true,
+        etag: false
+      }
+    ));
+
+    // Serve index.html with no-cache so new 
+    // asset hashes are always picked up
+    app.get('/', (req, res) => {
+      res.setHeader('Cache-Control', 'no-cache');
+      res.sendFile(
+        path.join(__dirname, 'dist/index.html')
+      );
+    });
+
+    // Catch-all for any other HTML routes
+    app.get('*', (req, res) => {
+      res.setHeader('Cache-Control', 'no-cache');
+      res.sendFile(
+        path.join(__dirname, 'dist/index.html')
+      );
+    });
+
+  } else {
+    // DEV MODE — serve raw source files directly
+    app.use(express.static(
+      path.join(__dirname, 'assets')
+    ));
+    app.get('*', (req, res) => {
+      res.sendFile(
+        path.join(__dirname, 'index.html')
+      );
+    });
+  }
+
+  app.listen(PORT, () => {
+    console.log(
+      `Blaze Studio running in 
+      ${isProd ? 'PRODUCTION' : 'DEV'} mode 
+      on port ${PORT}`
+    );
+  });
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+3. INSTALL REQUIRED DEPENDENCY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Install the compression middleware if not already present:
+
+  pnpm add compression
+
+Add to package.json dependencies — confirm it is 
+listed under "dependencies" not "devDependencies" 
+since it runs in production.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+4. UPDATE package.json SCRIPTS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  "scripts": {
+    "dev": "node server.js",
+    "build": "node scripts/hash-assets.js",
+    "start": "NODE_ENV=production node server.js",
+    "deploy": "pnpm build && pnpm start"
+  }
+
+  - dev    → runs raw source, no build needed
+  - build  → hashes assets, writes /dist
+  - start  → production server, serves /dist only
+  - deploy → full pipeline: build then start
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+5. SECURITY — BLOCK RAW SOURCE IN PROD:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+In production, the /assets source folder must never 
+be publicly accessible. Add this route guard in 
+server.js ABOVE the static middleware:
+
+  if (isProd) {
+    app.use('/assets-src', (req, res) => {
+      res.status(403).json({ error: 'Forbidden' });
+    });
+  }
+
+Also add /dist and /assets to .gitignore and 
+.replitignore so source assets are never exposed 
+through Replit's file browser in deployment:
+
+  .replitignore:
+    /assets
+    /scripts
+    node_modules
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+6. ENVIRONMENT VARIABLES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+In Replit's Secrets panel, add:
+
+  Key: NODE_ENV
+  Value: production
+
+This ensures NODE_ENV is always set correctly on 
+Replit's deployment environment — never relies on 
+the .replit file alone to set it.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+7. VERIFY THE DEPLOY PIPELINE WORKS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+After wiring everything up, run this checklist 
+in the Replit shell to confirm before going live:
+
+  # Confirm build runs clean
+  pnpm build
+
+  # Confirm /dist exists with hashed files
+  ls dist/assets/video
+  ls dist/assets/css
+  ls dist/assets/js
+
+  # Confirm manifest.json was generated
+  cat dist/manifest.json
+
+  # Start in production mode manually to test
+  NODE_ENV=production node server.js
+
+  # In a second shell, test cache headers
+  curl -I http://localhost:3000/assets/video/hero-bg.[hash].mp4
+  # Must return: Cache-Control: public, max-age=31536000, immutable
+
+  curl -I http://localhost:3000/
+  # Must return: Cache-Control: no-cache
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DELIVERABLE CHECKLIST:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Confirm every item before finishing:
+
+  [ ] .replit file created with build + run commands
+  [ ] NODE_ENV=production set in Replit Secrets panel
+  [ ] server.js splits dev and production cleanly
+  [ ] compression installed and active in production
+  [ ] /dist/assets served with immutable 1-year cache
+  [ ] index.html served with no-cache in producti

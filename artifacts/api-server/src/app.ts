@@ -1,6 +1,7 @@
 import express, { type Express, type Request, type Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 import pinoHttp from "pino-http";
 import path from "node:path";
 import { existsSync } from "node:fs";
@@ -9,6 +10,14 @@ import sitemapRouter from "./routes/sitemap";
 import { logger } from "./lib/logger";
 
 const app: Express = express();
+
+// gzip-compress every response in production. Skipped in dev so the
+// Vite dev server (with its own HMR transport) isn't double-handled.
+// compression() auto-skips already-compressed types like images,
+// video, and audio — so the hero MP4/WebM are correctly served raw.
+if (process.env["NODE_ENV"] === "production") {
+  app.use(compression());
+}
 
 app.use(
   pinoHttp({

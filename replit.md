@@ -33,7 +33,15 @@ The app runs as two parallel processes:
 - **Start application** (`PORT=21028`) — Vite dev server for `@workspace/blaze-studio` (the public site). Vite proxies `/api/*` to the API server (`API_SERVER_URL`, defaults to `http://localhost:8000`).
 - **API server** (`PORT=8000`) — Express backend (`@workspace/api-server`) that owns all `/api` routes (health, contact submissions). Persists to Postgres via Drizzle (`@workspace/db`).
 
-In production the **API server itself serves the built frontend**. When `NODE_ENV=production`, `artifacts/api-server/src/app.ts` mounts `artifacts/blaze-studio/dist/public/` as static files (override path with the `STATIC_DIR` env var) and falls through to `index.html` for unmatched non-API paths. Production deploy command: `pnpm -r build && NODE_ENV=production node artifacts/api-server/dist/index.mjs`.
+In production the **API server itself serves the built frontend**. When `NODE_ENV=production`, `artifacts/api-server/src/app.ts` mounts `artifacts/blaze-studio/dist/public/` as static files (override path with the `STATIC_DIR` env var) and falls through to `index.html` for unmatched non-API paths.
+
+### Replit Deploy
+
+Deployment is configured in `.replit`'s `[deployment]` block (managed via the deployment tool, never edit `.replit` by hand). Target is `autoscale`.
+
+- **Build command** (runs once per deploy): `PORT=5000 BASE_PATH=/ pnpm --filter @workspace/blaze-studio run build && pnpm --filter @workspace/api-server run build` — produces the hashed Vite bundle in `artifacts/blaze-studio/dist/public/` and the esbuild bundle in `artifacts/api-server/dist/index.mjs`. PORT and BASE_PATH are required by `vite.config.ts` at config-load time even for `vite build`.
+- **Run command**: `NODE_ENV=production node --enable-source-maps artifacts/api-server/dist/index.mjs` — Replit autoscale provides PORT via env. Setting NODE_ENV inline guarantees production mode without depending on a Secrets-panel value.
+- **What happens on click-Publish**: pnpm install → build command → `pnpm store prune` (postBuild) → run command. The autoscale container scales to zero between requests so cold starts are possible; the in-memory work in routes is minimal so first-byte stays fast.
 
 ### Asset caching strategy
 
@@ -41,6 +49,7 @@ In production the **API server itself serves the built frontend**. When `NODE_EN
 - **HTML shell** (`index.html` and SPA fallback) — returned with `Cache-Control: no-cache` so every visit revalidates and immediately picks up the new hashed asset URLs after a deploy.
 - **Other root-level static files** (favicon, logo, robots.txt) — moderate `max-age=1h` with ETag revalidation, since they are not content-hashed by Vite.
 - **Range requests** — Express 5's `express.static` natively returns `Accept-Ranges: bytes` and serves `206 Partial Content`, so the hero video can start playing before it's fully downloaded.
+- **gzip compression** — `compression()` middleware (production-only) shrinks every text response. Measured: HTML 1.6 KB → 0.9 KB (-46%), JS bundle 1.6 MB → 508 KB (-69%). The middleware auto-skips already-compressed media types (image, video, audio), so MP4/WebM/JPG bytes go through untouched.
 - **Hero video preload** — `index.html` includes a `<link rel="preload" as="image">` for the static poster JPG (Vite rewrites the `/src/...` href to the hashed URL during build); the video itself relies on `<video preload="auto">` plus the JS-bundle import, which start the byte fetch as soon as the JS loads. Mobile (`<768px`) swaps the desktop sources for a lighter 720p mobile MP4 inside a `useEffect` before the browser begins decoding.
 
 ### Adding API endpoints
