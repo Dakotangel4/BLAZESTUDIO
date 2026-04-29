@@ -207,7 +207,7 @@ function MarqueeRow({ brands, reverse = false }: { brands: Brand[]; reverse?: bo
         className="flex items-center"
         animate={{ x: reverse ? ["0%", "50%"] : ["0%", "-50%"] }}
         transition={{
-          x: { repeat: Infinity, repeatType: "loop", duration: 32, ease: "linear" },
+          x: { repeat: Infinity, repeatType: "loop", duration: 22, ease: "linear" },
         }}
       >
         {doubled.map((brand, i) => (
