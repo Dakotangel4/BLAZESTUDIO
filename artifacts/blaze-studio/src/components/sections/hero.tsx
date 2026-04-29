@@ -1,237 +1,176 @@
-import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Play, Sparkles, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useNav } from "@/hooks/use-nav";
-import heroFallback from "@/assets/hero-blaze-fallback.png";
-import heroVideo from "@/assets/hero-blaze-embers.mp4";
-
-type Particle = {
-  x: number;
-  y: number;
-  r: number;
-  vy: number;
-  vx: number;
-  alpha: number;
-  alphaDelta: number;
-  color: string;
-};
-
-const COLORS = ["#FF4500", "#FFA500", "#FF4500", "#FFA500", "#FFFFFF"];
 
 export default function Hero() {
   const navigate = useNav();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    setTimeout(() => {
-      const ctas = document.querySelector(".hero-blaze__ctas") as HTMLElement | null;
-      const sub = document.querySelector(".hero-blaze__sub") as HTMLElement | null;
-      const section = document.querySelector(".hero-blaze") as HTMLElement | null;
-      console.log("[hero-debug] innerHeight:", window.innerHeight, "innerWidth:", window.innerWidth);
-      const rect = (el: Element | null) => {
-        if (!el) return "null";
-        const r = el.getBoundingClientRect();
-        return `top=${r.top.toFixed(0)} bottom=${r.bottom.toFixed(0)} h=${r.height.toFixed(0)}`;
-      };
-      console.log("[hero-debug] section:", rect(section));
-      console.log("[hero-debug] sub:", rect(sub));
-      console.log("[hero-debug] ctas:", rect(ctas));
-      console.log("[hero-debug] ctas opacity:", ctas && getComputedStyle(ctas).opacity);
-    }, 1500);
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduceMotion) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let dpr = Math.min(window.devicePixelRatio || 1, 2);
-    let width = 0;
-    let height = 0;
-    let particles: Particle[] = [];
-    let rafId = 0;
-    let glowPhase = 0;
-
-    const targetCount = () => (window.innerWidth < 768 ? 60 : 120);
-
-    const spawn = (initial = false): Particle => {
-      const r = 1 + Math.random() * 3;
-      return {
-        x: Math.random() * width,
-        y: initial ? Math.random() * height : height + Math.random() * 40,
-        r,
-        vy: 0.2 + Math.random() * 0.7,
-        vx: (Math.random() - 0.5) * 0.4,
-        alpha: 0,
-        alphaDelta: 0.005 + Math.random() * 0.01,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      };
-    };
-
-    const resize = () => {
-      const rect = canvas.getBoundingClientRect();
-      width = rect.width;
-      height = rect.height;
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const target = targetCount();
-      if (particles.length === 0) {
-        particles = Array.from({ length: target }, () => spawn(true));
-      } else if (particles.length !== target) {
-        if (particles.length < target) {
-          while (particles.length < target) particles.push(spawn(true));
-        } else {
-          particles.length = target;
-        }
-      }
-    };
-
-    let resizeTimer: number | undefined;
-    const onResize = () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(() => {
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
-        resize();
-      }, 150);
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      // Pulsing radial heat glow from lower-center (4–6s breath)
-      glowPhase += 0.004;
-      const pulse = (Math.sin(glowPhase) + 1) / 2; // 0..1
-      const glowRadius = Math.max(width, height) * (0.55 + pulse * 0.15);
-      const glow = ctx.createRadialGradient(
-        width / 2,
-        height * 0.95,
-        0,
-        width / 2,
-        height * 0.95,
-        glowRadius,
-      );
-      const inner = 0.18 + pulse * 0.12;
-      glow.addColorStop(0, `rgba(255, 90, 0, ${inner})`);
-      glow.addColorStop(0.4, `rgba(255, 140, 0, ${inner * 0.45})`);
-      glow.addColorStop(1, "rgba(0, 0, 0, 0)");
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, width, height);
-
-      // Ember particles
-      ctx.globalCompositeOperation = "lighter";
-      for (const p of particles) {
-        p.y -= p.vy;
-        p.x += p.vx;
-        if (p.alpha < 1) p.alpha = Math.min(1, p.alpha + p.alphaDelta);
-
-        // Fade as they rise
-        const lifeRatio = 1 - (height - p.y) / height;
-        const drawAlpha = Math.max(0, Math.min(1, p.alpha * lifeRatio));
-
-        ctx.beginPath();
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = drawAlpha;
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Soft glow halo
-        ctx.globalAlpha = drawAlpha * 0.35;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (p.y < -10 || p.x < -10 || p.x > width + 10) {
-          Object.assign(p, spawn());
-        }
-      }
-      ctx.globalAlpha = 1;
-      ctx.globalCompositeOperation = "source-over";
-
-      rafId = requestAnimationFrame(draw);
-    };
-
-    const start = () => {
-      resize();
-      rafId = requestAnimationFrame(draw);
-    };
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", start, { once: true });
-    } else {
-      start();
-    }
-
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", onResize);
-      window.clearTimeout(resizeTimer);
-    };
-  }, []);
 
   return (
-    <section className="hero-blaze">
-      {/* [1] Background video */}
-      <video
-        ref={videoRef}
-        className="hero-blaze__video"
-        autoPlay
-        loop
-        muted
-        playsInline
-        poster={heroFallback}
-      >
-        <source src={heroVideo} type="video/mp4" />
-      </video>
+    <section className="relative pt-24 pb-16 sm:pt-32 sm:pb-20 md:pt-40 md:pb-28 lg:pt-44 overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_85%_10%,_var(--tw-gradient-stops))] from-primary/12 via-background to-background -z-10" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_60%_at_10%_100%,_var(--tw-gradient-stops))] from-primary/8 via-transparent to-transparent -z-10" />
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.025] -z-10" />
 
-      {/* [2] Ember particle canvas */}
-      <canvas ref={canvasRef} className="hero-blaze__canvas" aria-hidden="true" />
-
-      {/* [3] Dark overlay */}
-      <div className="hero-blaze__overlay" aria-hidden="true" />
-
-      {/* [4] Hero content */}
-      <div className="hero-blaze__content">
-        <span className="hero-blaze__eyebrow">WEB • APP • DIGITAL MARKETING</span>
-        <h1 className="hero-blaze__headline">
-          We Build Things That <span className="hero-blaze__headline-accent">Burn Bright</span>
-        </h1>
-        <p className="hero-blaze__sub">
-          Blaze Studio crafts high-performance websites, apps, and marketing
-          systems for brands that refuse to be ignored.
-        </p>
-        <div
-          className="hero-blaze__ctas"
-          style={{
-            display: "flex",
-            gap: 24,
-            background: "yellow",
-            padding: 8,
-            border: "4px solid magenta",
-            zIndex: 999,
-            position: "relative",
-            width: "100%",
-            minHeight: 100,
-          }}
-        >
-          <button
-            type="button"
-            className="hero-blaze__cta-primary"
-            onClick={() => navigate("/contact", "contact-form")}
+      <div className="container mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+          {/* Copy */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-6 min-w-0"
           >
-            Start a Project
-          </button>
-          <button
-            type="button"
-            className="hero-blaze__cta-secondary"
-            onClick={() => navigate("/portfolio")}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.15, duration: 0.4 }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/80 border border-primary/20 text-primary font-semibold text-[11px] sm:text-xs tracking-wider mb-5 sm:mb-6"
+            >
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              HIGH-CONVERTING WEBSITES
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.6 }}
+              className="text-[clamp(2.25rem,8vw,4.5rem)] lg:text-7xl font-extrabold tracking-[-0.02em] text-foreground leading-[1.05] mb-5 sm:mb-6 text-balance break-words hyphens-auto"
+            >
+              Your Website Should Be Your Best{" "}
+              <span className="text-primary inline-block">Salesperson.</span>
+              <br className="hidden sm:block" />
+              <span className="block sm:inline"> Is It?</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.35, duration: 0.6 }}
+              className="text-base sm:text-lg md:text-xl text-muted-foreground mb-7 sm:mb-8 leading-relaxed max-w-xl"
+            >
+              We build high-converting business websites, rank you on Google, run digital
+              campaigns that actually sell, and weave AI into your operations — all under one roof.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45, duration: 0.6 }}
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4"
+            >
+              <Button
+                size="lg"
+                className="h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 transition-all hover:scale-[1.03] active:scale-95 group"
+                onClick={() => navigate("/contact", "contact-form")}
+              >
+                Get a Free Audit
+                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-12 sm:h-14 px-6 sm:px-8 text-sm sm:text-base font-bold border-2 hover:bg-secondary transition-all"
+                onClick={() => navigate("/portfolio")}
+              >
+                See Our Work
+              </Button>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+              className="mt-8 sm:mt-10 flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-medium text-muted-foreground"
+            >
+              <div className="flex -space-x-2.5 sm:-space-x-3 shrink-0">
+                <img
+                  src="/src/assets/test-1.png"
+                  alt="Client"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-background object-cover"
+                />
+                <img
+                  src="/src/assets/test-2.png"
+                  alt="Client"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-background object-cover"
+                />
+                <img
+                  src="/src/assets/test-3.png"
+                  alt="Client"
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-background object-cover"
+                />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1 mb-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                  <span className="ml-1 text-foreground font-semibold">4.9</span>
+                </div>
+                <p className="leading-tight">Trusted by 50+ businesses in Lagos</p>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Visual */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, rotate: -1.5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ delay: 0.4, duration: 0.8, type: "spring", stiffness: 70 }}
+            className="lg:col-span-6 relative w-full aspect-[4/5] sm:aspect-[5/4] lg:aspect-auto lg:h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-primary/15 border border-white/30"
           >
-            See Our Work <span aria-hidden="true">→</span>
-          </button>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent z-10" />
+            <img
+              src="/src/assets/hero-team.png"
+              alt="Creative team collaborating"
+              className="w-full h-full object-cover object-center"
+            />
+
+            {/* Floating stats card */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.6 }}
+              className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 bg-white/95 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-xl z-20 flex items-center justify-between gap-3"
+            >
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 fill-current" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs sm:text-sm font-bold text-foreground truncate">
+                    Average Growth
+                  </p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                    in first 90 days
+                  </p>
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-xl sm:text-2xl font-extrabold text-primary tabular-nums">
+                  +180%
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Floating tag — desktop only */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.1, duration: 0.6 }}
+              className="hidden md:flex absolute top-6 right-6 z-20 items-center gap-2 px-3 py-2 rounded-full bg-white/95 backdrop-blur-md shadow-lg text-xs font-bold text-foreground"
+            >
+              <span className="relative flex w-2 h-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              Live projects shipping
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
