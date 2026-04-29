@@ -33,7 +33,7 @@ args = "PORT=21028 BASE_PATH=/ pnpm --filter @workspace/blaze-studio run dev"
 waitForPort = 21028
 
 [agent]
-stack = "PNPM_WORKSPACE"
+stack = "BEST_EFFORT_FALLBACK"
 expertMode = true
 
 [postMerge]
