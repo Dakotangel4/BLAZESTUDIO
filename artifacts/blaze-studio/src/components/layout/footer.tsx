@@ -89,15 +89,15 @@ export default function Footer() {
             <ul className="space-y-4 text-muted-foreground">
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                <span>Victoria Island,<br/>Lagos, Nigeria</span>
+                <span>J&amp;F Plaza, Opp Otokutu Market,<br/>Otokutu, Delta, Nigeria</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                <a href="tel:+2348000000000" className="hover:text-primary transition-colors">+234 (0) 800 000 0000</a>
+                <a href="tel:+2349130986279" className="hover:text-primary transition-colors">+234 913 098 6279</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                <a href="mailto:hello@blazestudio.com" className="hover:text-primary transition-colors">hello@blazestudio.com</a>
+                <a href="mailto:info@blazestudio.com.ng" className="hover:text-primary transition-colors">info@blazestudio.com.ng</a>
               </li>
             </ul>
           </div>
